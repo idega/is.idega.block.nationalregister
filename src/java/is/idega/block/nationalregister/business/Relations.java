@@ -186,23 +186,23 @@ public class Relations{
 		
 		Iterator iter = b.child.iterator();
 		while (iter.hasNext()) {
-			c.child.remove((User) iter.next());
+			c.child.remove(iter.next());
 		}
 		iter = b.hasCustodian.iterator();
 		while (iter.hasNext()) {
-			c.hasCustodian.remove((User) iter.next());
+			c.hasCustodian.remove(iter.next());
 		}
 		iter = b.isCustodianFor.iterator();
 		while (iter.hasNext()) {
-			c.isCustodianFor.remove((User) iter.next());
+			c.isCustodianFor.remove(iter.next());
 		}
 		iter = b.parent.iterator();
 		while (iter.hasNext()) {
-			c.parent.remove((User) iter.next());
+			c.parent.remove(iter.next());
 		}
 		iter = b.sibling.iterator();
 		while (iter.hasNext()) {
-			c.sibling.remove((User) iter.next());
+			c.sibling.remove(iter.next());
 		}
 		
 		return c;
