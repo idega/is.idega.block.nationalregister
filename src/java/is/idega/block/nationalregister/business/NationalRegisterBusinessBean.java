@@ -93,7 +93,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		Group citizenGroup) {
 
 		
-		String oldFamilyID = null;
 		
 			
 		try {
@@ -101,8 +100,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			NationalRegister reg = getEntryBySSN(ssn);
 			if (reg == null) {
 				reg = getNationalRegisterHome().create();
-			} else {
-				oldFamilyID = reg.getFamilyId();
 			}
 			reg.setAddress(address);
 			reg.setBuilding(building);
@@ -211,7 +208,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	}
 	
 	public void updateUserPersonalID(String oldPersonalID, String newPersonalID) throws IBOLookupException{
-		UserBusiness userBiz = (UserBusiness) getServiceInstance(UserBusiness.class);	
 		NationalRegister reg = getEntryBySSN(oldPersonalID);
 
 		if (reg != null) {
@@ -221,7 +217,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	}
 	
 	public void updateUserOldID(String oldID, String personalID) throws IBOLookupException{
-		UserBusiness userBiz = (UserBusiness) getServiceInstance(UserBusiness.class);	
 		NationalRegister reg = getEntryBySSN(personalID);
 
 		if (reg != null) {
@@ -304,7 +299,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#beforeUserRemove(com.idega.user.data.User)
 	 */
 	public void beforeUserRemove(User user, Group parentGroup) throws RemoveException, RemoteException {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -312,31 +306,24 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#afterUserCreate(com.idega.user.data.User)
 	 */
 	public void afterUserCreateOrUpdate(User user, Group parentGroup) throws CreateException, RemoteException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#beforeGroupRemove(com.idega.user.data.Group)
 	 */
 	public void beforeGroupRemove(Group group, Group parentGroup) throws RemoveException, RemoteException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#afterGroupCreate(com.idega.user.data.Group)
 	 */
 	public void afterGroupCreateOrUpdate(Group group, Group parentGroup) throws CreateException, RemoteException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#instanciateEditor(com.idega.user.data.Group)
 	 */
 	public PresentationObject instanciateEditor(Group group) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -344,7 +331,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#instanciateViewer(com.idega.user.data.Group)
 	 */
 	public PresentationObject instanciateViewer(Group group) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -352,7 +338,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getUserPropertiesTabs(com.idega.user.data.User)
 	 */
 	public List getUserPropertiesTabs(User user) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -360,7 +345,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getGroupPropertiesTabs(com.idega.user.data.Group)
 	 */
 	public List getGroupPropertiesTabs(Group group) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -377,7 +361,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getGroupToolbarElements(com.idega.user.data.Group)
 	 */
 	public List getGroupToolbarElements(Group group) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -385,7 +368,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#isUserAssignableFromGroupToGroup(com.idega.user.data.User, com.idega.user.data.Group, com.idega.user.data.Group)
 	 */
 	public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -393,7 +375,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#isUserSuitedForGroup(com.idega.user.data.User, com.idega.user.data.Group)
 	 */
 	public String isUserSuitedForGroup(User user, Group targetGroup) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -405,7 +386,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusiness#getPresentationObjectClass()
 	 */
 	public Class getPresentationObjectClass() throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -413,7 +393,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusiness#getListViewerFields()
 	 */
 	public Collection getListViewerFields() throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -421,7 +400,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusiness#findGroupsByFields(java.util.Collection, java.util.Collection, java.util.Collection)
 	 */
 	public Collection findGroupsByFields(Collection listViewerFields, Collection finderOperators, Collection listViewerFieldValues) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -429,7 +407,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#canCreateSubGroup(com.idega.user.data.Group,java.lang.String)
 	 */
 	public String canCreateSubGroup(Group group, String groupTypeOfSubGroup) throws RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

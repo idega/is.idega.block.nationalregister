@@ -304,11 +304,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			int intervalBetweenOutput = 100;
 			
 			Iterator keysIter = affectedFamilies.iterator();
-			Iterator ssnIter;
 			String key;
-			String ssn;
 			int counter = 0;
-			Collection ssnColl;
 			Collection familyColl;
 			System.out.println("NatRegImport Total families to handle = "+totalRecords);
 			System.out.println("NatRegImport processing family relations RECORD [0] time: " + IWTimestamp.getTimestampRightNow().toString());
