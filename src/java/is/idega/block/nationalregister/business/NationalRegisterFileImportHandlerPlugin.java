@@ -1,16 +1,11 @@
 package is.idega.block.nationalregister.business;
 
 import is.idega.block.nationalregister.data.NationalRegisterImportFileE36;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 import com.idega.block.importer.presentation.Importer;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -68,19 +63,10 @@ public class NationalRegisterFileImportHandlerPlugin implements ToolbarElement {
 	 */
 	public boolean isValid(IWContext iwc) {
 		if (iwc.isSuperAdmin()) {
-	        try {
-	        	ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
-	        	String showStuff =applicationBindingBusiness.get("temp_show_is_related_stuff");
-	        	// original condition, everything is true if not null
-	        	return (showStuff != null);
-	        }
-	        catch (IBOLookupException ex) {
-	        	throw new IBORuntimeException(ex);
-	        }
-	        catch (IOException ex) {
-	        	Logger.getLogger(NationalRegisterFileImportHandlerPlugin.class.getName()).warning("[NationalRegisterFileImportHandlerPlugin] Could not look up parameter temp_show_is_related_stuff");
-	        	return false;
-	        }
+			IWMainApplicationSettings settings = iwc.getApplicationSettings();
+        	String showStuff = settings.getProperty("temp_show_is_related_stuff");
+        	// original condition, everything is true if not null
+        	return (showStuff != null);
 		}
 		return false;
 	}
