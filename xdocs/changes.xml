@@ -1,0 +1,15 @@
+<document>
+  <properties>
+    <title>National register changes</title>
+    <author email="laddi@idega.com">Thorhallur "Laddi" Helgason</author>
+  </properties>
+  <body>
+
+    <release version="1.0.1" date="2006-07-11">
+      <action dev="laddi" type="update">
+        Declarion new version for this block.
+      </action>              
+    </release>
+
+  </body>
+</document>
