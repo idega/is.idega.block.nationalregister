@@ -27,6 +27,11 @@
       <type>java.lang.String</type>
       <value>is.idega.block.nationalregister</value>
     </key>
+    <key>
+      <name>AUTO_CREATE_NON_EXISTING_USERS_IN_DECEASED_IMPORT</name>
+      <type>java.lang.String</type>
+      <value>false</value>
+    </key>
   </map>
 </pxml>
 
