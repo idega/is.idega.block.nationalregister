@@ -5,6 +5,18 @@
   </properties>
   <body>
 
+    <release version="1.0.3" date="2007-01-26">
+      <action dev="sigtryggur" type="update">
+        Added import for deceasedregister (Horfinnaskrá) and minor updates for the nationalregisterimport
+      </action>              
+    </release>
+    
+    <release version="1.0.2" date="2006-07-12">
+      <action dev="laddi" type="update">
+        Declarion new version for this block.
+      </action>              
+    </release>
+    
     <release version="1.0.1" date="2006-07-11">
       <action dev="laddi" type="update">
         Declarion new version for this block.
