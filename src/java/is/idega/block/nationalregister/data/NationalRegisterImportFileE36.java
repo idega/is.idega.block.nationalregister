@@ -14,6 +14,8 @@ import com.idega.block.importer.data.ImportFile;
  */
 public class NationalRegisterImportFileE36		extends	GenericImportFile implements ImportFile {
 
+	public static final int NUMBER_OF_LETTERS_PER_LINE = 300;
+
 	public NationalRegisterImportFileE36() {
 		super();
 		setRecordDilimiter("\n");
@@ -35,6 +37,8 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 	 * @see com.idega.block.importer.data.ImportFile#getValuesFromRecordString(java.lang.String)
 	 */
 	public ArrayList getValuesFromRecordString(String recordString) {
+		if (recordString != null && recordString.length() < NUMBER_OF_LETTERS_PER_LINE)
+			throw new RuntimeException("Numbers of letters in the record string was too low. According to standard it should be " + NUMBER_OF_LETTERS_PER_LINE + ", but was " + recordString.length());
 		ArrayList values = new ArrayList();
 		for (int i = 0; i < 27; i++) {
 			String value = getValueAtIndexFromRecordString(i,recordString);
