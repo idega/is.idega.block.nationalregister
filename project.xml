@@ -24,6 +24,11 @@
       <name>1.0.3</name>
       <tag>NATIONAL_REGISTER_1_0_3</tag>
     </version>
+    <version>
+      <id>1.0.4</id>
+      <name>1.0.4</name>
+      <tag>NATIONAL_REGISTER_1_0_4</tag>
+    </version>
   </versions>
   <branches/>
   <developers>
