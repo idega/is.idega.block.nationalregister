@@ -1,27 +1,36 @@
 <document>
-  <properties>
-    <title>National register changes</title>
-    <author email="laddi@idega.com">Thorhallur "Laddi" Helgason</author>
-  </properties>
-  <body>
+	<properties>
+		<title>National register changes</title>
+		<author email="laddi@idega.com">
+			Thorhallur "Laddi" Helgason
+		</author>
+	</properties>
+	<body>
+		<release version="1.0.4" date="2007-03-02">
+			<action dev="palli" type="update">
+				Updated project file and dependencies and recreated
+				eclipse .project file.
+			</action>
+		</release>
 
-    <release version="1.0.3" date="2007-01-26">
-      <action dev="sigtryggur" type="update">
-        Added import for deceasedregister (Horfinnaskrá) and minor updates for the nationalregisterimport
-      </action>              
-    </release>
-    
-    <release version="1.0.2" date="2006-07-12">
-      <action dev="laddi" type="update">
-        Declarion new version for this block.
-      </action>              
-    </release>
-    
-    <release version="1.0.1" date="2006-07-11">
-      <action dev="laddi" type="update">
-        Declarion new version for this block.
-      </action>              
-    </release>
+		<release version="1.0.3" date="2007-01-26">
+			<action dev="sigtryggur" type="update">
+				Added import for deceasedregister (Horfinnaskrá) and
+				minor updates for the nationalregisterimport
+			</action>
+		</release>
 
-  </body>
+		<release version="1.0.2" date="2006-07-12">
+			<action dev="laddi" type="update">
+				Declarion new version for this block.
+			</action>
+		</release>
+
+		<release version="1.0.1" date="2006-07-11">
+			<action dev="laddi" type="update">
+				Declarion new version for this block.
+			</action>
+		</release>
+
+	</body>
 </document>
