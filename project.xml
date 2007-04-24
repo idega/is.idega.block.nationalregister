@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Nationalregister Block</name>
   <artifactId>is.idega.block.nationalregister</artifactId>
-  <currentVersion>1.0.4</currentVersion>
+  <currentVersion>1.0.5</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>Application</shortDescription>
   <versions>
