@@ -6,6 +6,13 @@
 		</author>
 	</properties>
 	<body>
+		<release version="1.0.5" date="2007-04-24">
+			<action dev="eiki" type="update">
+				Updated project file and dependencies and recreated
+				eclipse .project file.
+			</action>
+		</release>
+		
 		<release version="1.0.4" date="2007-03-02">
 			<action dev="palli" type="update">
 				Updated project file and dependencies and recreated
