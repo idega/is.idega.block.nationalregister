@@ -8,7 +8,7 @@
   	<version>4.0-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
-  <groupId>com.idega.block.egov</groupId>
+  <groupId>com.idega.block.custom</groupId>
   <name>idegaWeb Nationalregister Block</name>
   <artifactId>is.idega.block.nationalregister</artifactId>
   <version>4.0-SNAPSHOT</version>
