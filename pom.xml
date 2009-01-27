@@ -4,12 +4,12 @@
   <parent>
   	<groupId>com.idega.block.egov</groupId>
   	<artifactId>com.idega.block.egov</artifactId>
-  	<version>4.1.0</version>
+  	<version>4.1.1-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.egov</groupId>
   <artifactId>is.idega.block.nationalregister</artifactId>
-  <version>4.1.0</version>
+  <version>4.1.1-SNAPSHOT</version>
   <name>idegaWeb Nationalregister Block</name>
   <inceptionYear>2000</inceptionYear>
   <scm>
@@ -19,7 +19,6 @@
      -->
     <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.egov/is.idega.block.nationalregister/</connection>
     <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.egov/is.idega.block.nationalregister/</developerConnection>
-    <tag>com_idega_block_egov-4_1_0</tag>
   </scm>
 
   <developers>
