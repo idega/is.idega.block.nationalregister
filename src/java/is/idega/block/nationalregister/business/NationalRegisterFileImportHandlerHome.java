@@ -1,13 +1,11 @@
 package is.idega.block.nationalregister.business;
 
+
+import javax.ejb.CreateException;
 import com.idega.business.IBOHome;
+import java.rmi.RemoteException;
 
-
-/**
- * @author Joakim
- *
- */
 public interface NationalRegisterFileImportHandlerHome extends IBOHome {
-
-	public NationalRegisterFileImportHandler create() throws javax.ejb.CreateException, java.rmi.RemoteException;
+	public NationalRegisterFileImportHandler create() throws CreateException,
+			RemoteException;
 }

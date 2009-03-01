@@ -56,6 +56,9 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 	/* (non-Javadoc)
 	 * @see com.idega.block.importer.data.ImportFile#getValueAtIndexFromRecordString(int, java.lang.String)
 	 */
+/*	
+FE        01010124701604745569pCcr gcvpitCCwv uoBo      00101000008700081   31   IS000001012001Ísak Miri Daníelsson                     000008700081                                                        107Birkimelur 8a        Birkimel 8a
+*/                         
 	public String getValueAtIndexFromRecordString(int index, String recordString) {
 		try {
 			switch(index) {
