@@ -131,7 +131,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private final static String PROPERTY_NAME_GROUP_FIX = "NAT_REG_GROUP_ID_FIX";
 
 	/*
-	 * private final static String FATE_DECEASED = "LÉST"; private final static
+	 * private final static String FATE_DECEASED = "Lï¿½ST"; private final static
 	 * String FATE_CHANGE_PERSONAL_ID = "BRFD"; private final static String
 	 * FATE_REMOVED = "BRFL"; //private final static String FATE_CHANGE_OLD_ID =
 	 * "BRNN";
@@ -905,6 +905,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	 */
 	public List getFailedRecords() throws RemoteException {
 		return this.failedRecordList;
+	}
+	
+	public List getSuccessRecords() throws RemoteException {
+		return null;
 	}
 
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {
