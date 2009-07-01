@@ -908,7 +908,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	}
 	
 	public List getSuccessRecords() throws RemoteException {
-		return null;
+		return new ArrayList();
 	}
 
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {
