@@ -652,6 +652,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private boolean processRecord(String record) throws RemoteException, CreateException {
 		this.valueList = this.file.getValuesFromRecordString(record);
 		boolean success = storeNationRegisterEntry();
+		//boolean success = updateNationRegisterEntry();
 		this.valueList = null;
 		return success;
 	}
@@ -663,6 +664,20 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			System.out.println((String) iter.next());
 		}
 	}
+
+	protected boolean updateNationRegisterEntry() throws RemoteException, CreateException {
+		// variables
+		String ssn = getProperty(COLUMN_SSN);
+		String addressName = getProperty(COLUMN_ADDRESS_NAME);
+
+		boolean success = true;
+		if (ssn == null || ssn.equals("")) {
+			return false;
+		}
+			
+		return this.natBiz.updateEntryAddress(ssn, addressName);
+	}
+	
 
 	protected boolean storeNationRegisterEntry() throws RemoteException, CreateException {
 		// variables

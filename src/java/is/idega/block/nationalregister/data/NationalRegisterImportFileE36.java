@@ -40,7 +40,7 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 		if (recordString != null && recordString.length() < NUMBER_OF_LETTERS_PER_LINE)
 			throw new RuntimeException("Numbers of letters in the record string was too low. According to standard it should be " + NUMBER_OF_LETTERS_PER_LINE + ", but was " + recordString.length());
 		ArrayList values = new ArrayList();
-		for (int i = 0; i < 27; i++) {
+		for (int i = 0; i < 28; i++) {
 			String value = getValueAtIndexFromRecordString(i,recordString);
 			if (value != null) {
 				values.add(value);
@@ -58,6 +58,7 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 	 */
 /*	
 FE        01010124701604745569pCcr gcvpitCCwv uoBo      00101000008700081   31   IS000001012001Ísak Miri Daníelsson                     000008700081                                                        107Birkimelur 8a        Birkimel 8a
+FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  BIS600001011944Sigurður Sigfússon             3108474029               100709                                                  Drekagil 28                                                      LÉST100709                  
 */                         
 	public String getValueAtIndexFromRecordString(int index, String recordString) {
 		try {
