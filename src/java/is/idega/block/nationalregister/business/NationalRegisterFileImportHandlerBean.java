@@ -670,7 +670,6 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		String ssn = getProperty(COLUMN_SSN);
 		String addressName = getProperty(COLUMN_ADDRESS_NAME);
 
-		boolean success = true;
 		if (ssn == null || ssn.equals("")) {
 			return false;
 		}
