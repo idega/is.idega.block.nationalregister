@@ -62,24 +62,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		return null;
 	}
 
-	public boolean updateEntryAddress(
-			String ssn,
-			String addressName) {
-
-			
-			
-				
-				NationalRegister reg = getEntryBySSN(ssn);
-				if (reg != null) {
-					reg.setAddressName(addressName);
-					reg.store();
-					return true;
-				}
-
-				return false;
-		}
-
-	
 	public boolean updateEntry(
 		String symbol,
 		String oldId,

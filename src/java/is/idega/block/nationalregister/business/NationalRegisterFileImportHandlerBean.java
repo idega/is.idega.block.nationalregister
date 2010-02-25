@@ -131,7 +131,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private final static String PROPERTY_NAME_GROUP_FIX = "NAT_REG_GROUP_ID_FIX";
 
 	/*
-	 * private final static String FATE_DECEASED = "Lï¿½ST"; private final static
+	 * private final static String FATE_DECEASED = "LÉST"; private final static
 	 * String FATE_CHANGE_PERSONAL_ID = "BRFD"; private final static String
 	 * FATE_REMOVED = "BRFL"; //private final static String FATE_CHANGE_OLD_ID =
 	 * "BRNN";
@@ -652,7 +652,6 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private boolean processRecord(String record) throws RemoteException, CreateException {
 		this.valueList = this.file.getValuesFromRecordString(record);
 		boolean success = storeNationRegisterEntry();
-		//boolean success = updateNationRegisterEntry();
 		this.valueList = null;
 		return success;
 	}
@@ -664,20 +663,6 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			System.out.println((String) iter.next());
 		}
 	}
-
-	protected boolean updateNationRegisterEntry() throws RemoteException, CreateException {
-		// variables
-		String ssn = getProperty(COLUMN_SSN);
-		String addressName = getProperty(COLUMN_ADDRESS_NAME);
-
-		boolean success = true;
-		if (ssn == null || ssn.equals("")) {
-			return false;
-		}
-			
-		return this.natBiz.updateEntryAddress(ssn, addressName);
-	}
-	
 
 	protected boolean storeNationRegisterEntry() throws RemoteException, CreateException {
 		// variables
@@ -920,10 +905,6 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	 */
 	public List getFailedRecords() throws RemoteException {
 		return this.failedRecordList;
-	}
-	
-	public List getSuccessRecords() throws RemoteException {
-		return new ArrayList();
 	}
 
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {

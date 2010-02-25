@@ -1,5 +1,5 @@
 /*
- * $Id: NationalRegisterDeceasedFileImportHandlerBean.java,v 1.4 2009/07/01 08:49:00 laddi Exp $
+ * $Id: NationalRegisterDeceasedFileImportHandlerBean.java,v 1.2 2007/01/12 21:57:39 idegaweb Exp $
  * Created on Nov 21, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -102,10 +102,6 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 
 	public List getFailedRecords() throws RemoteException {
 		return this.failedRecordList;
-	}
-	
-	public List getSuccessRecords() throws RemoteException {
-		return new ArrayList();
 	}
 
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {

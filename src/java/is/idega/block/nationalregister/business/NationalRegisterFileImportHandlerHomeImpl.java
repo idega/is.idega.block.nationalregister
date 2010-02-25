@@ -1,17 +1,20 @@
 package is.idega.block.nationalregister.business;
 
-
-import javax.ejb.CreateException;
 import com.idega.business.IBOHomeImpl;
 
-public class NationalRegisterFileImportHandlerHomeImpl extends IBOHomeImpl
-		implements NationalRegisterFileImportHandlerHome {
-	@Override
-	public Class<NationalRegisterFileImportHandler> getBeanInterfaceClass() {
+
+/**
+ * @author Joakim
+ *
+ */
+public class NationalRegisterFileImportHandlerHomeImpl extends IBOHomeImpl implements
+		NationalRegisterFileImportHandlerHome {
+
+	protected Class getBeanInterfaceClass() {
 		return NationalRegisterFileImportHandler.class;
 	}
 
-	public NationalRegisterFileImportHandler create() throws CreateException {
+	public NationalRegisterFileImportHandler create() throws javax.ejb.CreateException {
 		return (NationalRegisterFileImportHandler) super.createIBO();
 	}
 }
