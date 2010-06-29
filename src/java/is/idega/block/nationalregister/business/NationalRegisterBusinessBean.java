@@ -3,18 +3,22 @@ package is.idega.block.nationalregister.business;
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.nationalregister.data.NationalRegister;
 import is.idega.block.nationalregister.data.NationalRegisterHome;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOServiceBean;
+import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Commune;
 import com.idega.core.location.data.CommuneHome;
 import com.idega.core.location.data.Country;
@@ -214,7 +218,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				city = getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString()));
 			}
 			
-			updateUserAddress(user, userBiz, address, po, country, city, communeID);
+			updateUserAddress(user, userBiz, address, po, country, city, communeID, addressName);
 			
 			if (citizenGroup != null) {
 				citizenGroup.addGroup(user);
@@ -262,11 +266,19 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		}
 	}
 	
-	public void updateUserAddress(User user, UserBusiness userBiz, String address, String po, Country country, String city, Integer communeID) throws RemoteException, CreateException {
+	public void updateUserAddress(User user, UserBusiness userBiz, String address, String po, Country country, String city, Integer communeID, String addressName) throws RemoteException, CreateException {
 		PostalCode postalCode = getPostalCode(po);
 
-		userBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
-		userBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		Address entry = userBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		if (entry != null) {
+			entry.setStreetAddressNominative(addressName);
+			entry.store();
+		}
+		entry = userBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		if (entry != null) {
+			entry.setStreetAddressNominative(addressName);
+			entry.store();
+		}
 	}
 
 	public PostalCode getPostalCode(String po) throws RemoteException {

@@ -63,7 +63,7 @@ public interface NationalRegisterBusiness extends IBOService,
 	 */
 	public void updateUserAddress(User user, UserBusiness userBiz,
 			String address, String po, Country country, String city,
-			Integer communeID) throws RemoteException, CreateException,
+			Integer communeID, String addressName) throws RemoteException, CreateException,
 			RemoteException;
 
 	/**
