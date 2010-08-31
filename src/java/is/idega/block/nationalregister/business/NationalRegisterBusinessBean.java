@@ -226,6 +226,9 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				user.store();
 			}
 
+			user.setLastReadFromImport(IWTimestamp.getTimestampRightNow());
+			user.store();
+			
 			FamilyLogic familyLogic = getFamilyLogic();
 			familyLogic.updateFamilyForUser(familyId, user);
 
