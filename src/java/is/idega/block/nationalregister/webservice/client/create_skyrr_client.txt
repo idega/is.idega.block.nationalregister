@@ -1,0 +1,1 @@
+java -cp $AXIS_LIB org.apache.axis.wsdl.WSDL2Java -p is.idega.block.nationalregister.webservice.client.skyrr https://gognxml.uh.is/xml_service.asmx?wsdl

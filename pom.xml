@@ -69,5 +69,9 @@
       <groupId>com.idega.block.egov</groupId>
       <artifactId>is.idega.block.family</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.idega.block.platform</groupId>
+      <artifactId>org.apache.axis</artifactId>
+    </dependency>
   </dependencies>
 </project>
