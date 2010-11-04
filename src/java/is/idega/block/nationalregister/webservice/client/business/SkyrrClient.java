@@ -79,7 +79,7 @@ public class SkyrrClient {
 					login.username, login.password, personalID);
 			if (res.isFANNST()) {
 				Object ret[] = res.getNIDURSTADA();
-				Faersla entry = (Faersla) ret[1];
+				Faersla entry = (Faersla) ret[0];
 				
 				return createCompanyHolderFromFaersla(entry);
 			} else {
