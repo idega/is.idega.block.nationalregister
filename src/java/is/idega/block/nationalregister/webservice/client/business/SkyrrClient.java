@@ -75,7 +75,7 @@ public class SkyrrClient {
 		SkyrrLoginClass login = getLogin();
 
 		try {
-			Uttak res = getPort().XMT0002(login.origin, login.payersPersonalID,
+			Uttak res = getPort().XMF0002(login.origin, login.payersPersonalID,
 					login.username, login.password, personalID);
 			if (res.isFANNST()) {
 				Object ret[] = res.getNIDURSTADA();

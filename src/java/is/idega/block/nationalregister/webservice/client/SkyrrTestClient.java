@@ -1,6 +1,5 @@
 package is.idega.block.nationalregister.webservice.client;
 
-import is.idega.block.nationalregister.webservice.client.skyrr.Adili;
 import is.idega.block.nationalregister.webservice.client.skyrr.Faersla;
 import is.idega.block.nationalregister.webservice.client.skyrr.Uttak;
 import is.idega.block.nationalregister.webservice.client.skyrr.Xml_ServiceLocator;
@@ -36,12 +35,13 @@ public class SkyrrTestClient {
 					System.out.println("postnumer = " + entry.getPOSTNUMER());
 					System.out.println("poststod = " + entry.getPOSTSTOD());
 					System.out.println("kennitala = " + entry.getKENNITALA());
+					//System.out.println("kynkodi = " +entry.getKYNKODI());
 				}
 			} else {
 				System.out.println("Didn't find user " + res.getVILLA());
 			}
-*/			
 			
+	*/		
 			Uttak res = port.XMF0002(args[0], args[1], args[2], args[3], args[4]);
 			
 			if (res.isFANNST()) {
