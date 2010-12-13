@@ -7,6 +7,7 @@ import is.idega.block.nationalregister.webservice.client.ferli.XML_Nafn_Grunn;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 import javax.xml.rpc.ServiceException;
 
@@ -50,13 +51,18 @@ public class FerliClient {
 		FerliLoginClass login = getLogin();
 
 		try {
-			XML_Nafn_Grunn entry = getPort().getNafn_Grunn(personalID, login.password);
-			
-			if ("0".equals(entry.getRetkod())) {
+			TjodarsynXMLSoap_PortType port = getPort();
+			if(port != null){
+				XML_Nafn_Grunn entry = port.getNafn_Grunn(personalID, login.password);
 				
-				return createUserHolderFromNafnGrunn(entry);
+				if ("0".equals(entry.getRetkod())) {
+					
+					return createUserHolderFromNafnGrunn(entry);
+				} else {
+					System.out.println(entry.getRetLys());
+				}
 			} else {
-				System.out.println(entry.getRetLys());
+				Logger.getLogger(FerliClient.class.getName()).warning("TjodarsynXMLSoap_PortType is null.");
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
