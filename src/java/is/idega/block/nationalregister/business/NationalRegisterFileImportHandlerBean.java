@@ -130,6 +130,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	private final static String PROPERTY_NAME_GROUP_FIX = "NAT_REG_GROUP_ID_FIX";
 
+	private final static String PROPERTY_NAME_SKIP_RELATIONS = "NAT_REG_SKIP_REL";
+
+	private final static String PROPERTY_NAME_SKIP_DECEASED = "NAT_REG_SKIP_DEAD";
+
 	/*
 	 * private final static String FATE_DECEASED = "L�ST"; private final static
 	 * String FATE_CHANGE_PERSONAL_ID = "BRFD"; private final static String
@@ -147,7 +151,11 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private boolean relationsOnly = false;
 
 	private boolean citizenGroupFix = false;
-
+	
+	private boolean skipRelations = false;
+	
+	private boolean skipDeceaced = false;
+	
 	private User performer = null;
 
 	private FamilyLogic famLog = null;
@@ -219,10 +227,14 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			String sRelationOnly = bundle.getProperty(PROPERTY_NAME_RELATION_ONLY);
 			String sPostal = bundle.getProperty(PROPERTY_NAME_POSTAL_CODE_FIX);
 			String sGroup = bundle.getProperty(PROPERTY_NAME_GROUP_FIX);
+			String sSkipRelations = bundle.getProperty(PROPERTY_NAME_SKIP_RELATIONS);
+			String sSkipDead = bundle.getProperty(PROPERTY_NAME_SKIP_DECEASED);
 			this.affectedFamilies = new HashSet();
 			this.postalCodeFix = (sPostal != null && sPostal.equalsIgnoreCase("yes"));
 			this.relationsOnly = (sRelationOnly != null && sRelationOnly.equalsIgnoreCase("yes"));
 			this.citizenGroupFix = (sGroup != null && sGroup.equalsIgnoreCase("yes"));
+			this.skipRelations = (sSkipRelations != null && sSkipRelations.equalsIgnoreCase("yes"));
+			this.skipDeceaced = (sSkipDead != null && sSkipDead.equalsIgnoreCase("yes"));
 			int count = 0;
 			if (this.postalCodeFix) {
 				System.out.println("NationalRegisterHandler postalCodeFix variable set to TRUE");
@@ -275,7 +287,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			System.out.println("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging "
 					+ (msTime / count) + "ms per record");
 			clock.start();
-			handleFamilyRelation();
+			if (!this.skipRelations) {
+				handleFamilyRelation();
+			}
 			clock.stop();
 			msTime = clock.getTime();
 			secTime = msTime / 1000;
