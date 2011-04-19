@@ -42,16 +42,17 @@ public class SkyrrTestClient {
 			}
 			
 	*/		
-			Uttak res = port.XMF0002(args[0], args[1], args[2], args[3], args[4]);
+			Uttak res = port.XMF0009(args[0], args[1], args[2], args[3], args[4]);
 			
 			if (res.isFANNST()) {
 				Object ret[] = res.getNIDURSTADA();
 				for (int i = 0; i < ret.length; i++) {
 					Faersla entry = (Faersla) ret[i];
 					System.out.println("name = " + entry.getNAFN());
-					System.out.println("postnumer = " + entry.getPOSTNUMER());
+					System.out.println("postnumer = " + entry.getPOSTNUMER_LOGHEIMILIS());
 					System.out.println("poststod = " + entry.getPOSTSTOD());
 					System.out.println("kennitala = " + entry.getKENNITALA());
+					System.out.println("logheimili = " + entry.getLOGHEIMILI());					
 
 					System.out.println("atvinnugr.nr. = " + entry.getATVINNUGREINANUMER());
 					System.out.println("is atv.gr.nr. = " + entry.getISATVINNUGREINANUMER());

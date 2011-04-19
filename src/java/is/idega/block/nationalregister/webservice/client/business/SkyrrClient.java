@@ -75,7 +75,7 @@ public class SkyrrClient {
 		SkyrrLoginClass login = getLogin();
 
 		try {
-			Uttak res = getPort().XMF0002(login.origin, login.payersPersonalID,
+			Uttak res = getPort().XMF0009(login.origin, login.payersPersonalID,
 					login.username, login.password, personalID);
 			if (res.isFANNST()) {
 				Object ret[] = res.getNIDURSTADA();
@@ -99,7 +99,7 @@ public class SkyrrClient {
 
 	private CompanyHolder createCompanyHolderFromFaersla(Faersla entry) {
 		return new CompanyHolder(entry.getNAFN(), entry.getKENNITALA(),
-				entry.getPOSTARITUN(), entry.getPOSTNUMER(),
+				entry.getLOGHEIMILI(), entry.getPOSTNUMER_LOGHEIMILIS(),
 				entry.getPOSTSTOD(), entry.getATVINNUGREINANUMER(),
 				entry.getISATVINNUGREINANUMER(), entry.getREKSTRARFORM(),
 				entry.getVASKNUMER());
