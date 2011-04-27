@@ -116,6 +116,8 @@ public class Faersla  implements java.io.Serializable {
 
     private java.lang.String POSTNUMER_LOGHEIMILIS;
 
+    private java.lang.String POSTSTOD_LOGHEIMILIS;
+
     private java.lang.String BORGERLENDIS;
 
     private java.lang.String LANDERLENDIS;
@@ -562,6 +564,7 @@ public class Faersla  implements java.io.Serializable {
            java.lang.String NAFN_FULLT,
            java.lang.String NAFN_ERLENT,
            java.lang.String POSTNUMER_LOGHEIMILIS,
+           java.lang.String POSTSTOD_LOGHEIMILIS,
            java.lang.String BORGERLENDIS,
            java.lang.String LANDERLENDIS,
            java.lang.String REKSTRARFORMHEITI,
@@ -810,6 +813,7 @@ public class Faersla  implements java.io.Serializable {
            this.NAFN_FULLT = NAFN_FULLT;
            this.NAFN_ERLENT = NAFN_ERLENT;
            this.POSTNUMER_LOGHEIMILIS = POSTNUMER_LOGHEIMILIS;
+           this.POSTSTOD_LOGHEIMILIS = POSTSTOD_LOGHEIMILIS;
            this.BORGERLENDIS = BORGERLENDIS;
            this.LANDERLENDIS = LANDERLENDIS;
            this.REKSTRARFORMHEITI = REKSTRARFORMHEITI;
@@ -2084,6 +2088,26 @@ public class Faersla  implements java.io.Serializable {
      */
     public void setPOSTNUMER_LOGHEIMILIS(java.lang.String POSTNUMER_LOGHEIMILIS) {
         this.POSTNUMER_LOGHEIMILIS = POSTNUMER_LOGHEIMILIS;
+    }
+
+
+    /**
+     * Gets the POSTSTOD_LOGHEIMILIS value for this Faersla.
+     * 
+     * @return POSTSTOD_LOGHEIMILIS
+     */
+    public java.lang.String getPOSTSTOD_LOGHEIMILIS() {
+        return POSTSTOD_LOGHEIMILIS;
+    }
+
+
+    /**
+     * Sets the POSTSTOD_LOGHEIMILIS value for this Faersla.
+     * 
+     * @param POSTSTOD_LOGHEIMILIS
+     */
+    public void setPOSTSTOD_LOGHEIMILIS(java.lang.String POSTSTOD_LOGHEIMILIS) {
+        this.POSTSTOD_LOGHEIMILIS = POSTSTOD_LOGHEIMILIS;
     }
 
 
@@ -6140,6 +6164,9 @@ public class Faersla  implements java.io.Serializable {
             ((this.POSTNUMER_LOGHEIMILIS==null && other.getPOSTNUMER_LOGHEIMILIS()==null) || 
              (this.POSTNUMER_LOGHEIMILIS!=null &&
               this.POSTNUMER_LOGHEIMILIS.equals(other.getPOSTNUMER_LOGHEIMILIS()))) &&
+            ((this.POSTSTOD_LOGHEIMILIS==null && other.getPOSTSTOD_LOGHEIMILIS()==null) || 
+             (this.POSTSTOD_LOGHEIMILIS!=null &&
+              this.POSTSTOD_LOGHEIMILIS.equals(other.getPOSTSTOD_LOGHEIMILIS()))) &&
             ((this.BORGERLENDIS==null && other.getBORGERLENDIS()==null) || 
              (this.BORGERLENDIS!=null &&
               this.BORGERLENDIS.equals(other.getBORGERLENDIS()))) &&
@@ -6894,6 +6921,9 @@ public class Faersla  implements java.io.Serializable {
         }
         if (getPOSTNUMER_LOGHEIMILIS() != null) {
             _hashCode += getPOSTNUMER_LOGHEIMILIS().hashCode();
+        }
+        if (getPOSTSTOD_LOGHEIMILIS() != null) {
+            _hashCode += getPOSTSTOD_LOGHEIMILIS().hashCode();
         }
         if (getBORGERLENDIS() != null) {
             _hashCode += getBORGERLENDIS().hashCode();
@@ -7925,6 +7955,13 @@ public class Faersla  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("POSTNUMER_LOGHEIMILIS");
         elemField.setXmlName(new javax.xml.namespace.QName("http://tempuri.org/", "POSTNUMER_LOGHEIMILIS"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("POSTSTOD_LOGHEIMILIS");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://tempuri.org/", "POSTSTOD_LOGHEIMILIS"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
