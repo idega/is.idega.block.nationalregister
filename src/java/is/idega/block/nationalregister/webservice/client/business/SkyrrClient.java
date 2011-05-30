@@ -100,7 +100,7 @@ public class SkyrrClient {
 	private CompanyHolder createCompanyHolderFromFaersla(Faersla entry) {
 		return new CompanyHolder(entry.getNAFN(), entry.getKENNITALA(),
 				entry.getLOGHEIMILI(), entry.getPOSTNUMER_LOGHEIMILIS(),
-				entry.getPOSTSTOD(), entry.getATVINNUGREINANUMER(),
+				entry.getPOSTSTOD_LOGHEIMILIS(), entry.getATVINNUGREINANUMER(),
 				entry.getISATVINNUGREINANUMER(), entry.getREKSTRARFORM(),
 				entry.getVASKNUMER());
 
