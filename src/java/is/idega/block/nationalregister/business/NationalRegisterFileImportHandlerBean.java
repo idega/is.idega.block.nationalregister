@@ -7,6 +7,7 @@ import is.idega.block.family.data.FamilyMemberHome;
 import is.idega.block.nationalregister.data.NationalRegister;
 import is.idega.block.nationalregister.data.NationalRegisterFate;
 import is.idega.block.nationalregister.data.NationalRegisterFateHome;
+
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -15,12 +16,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.block.importer.business.ImportFileHandler;
 import com.idega.block.importer.data.ImportFile;
 import com.idega.block.importer.presentation.Importer;
@@ -46,7 +49,7 @@ import com.idega.util.Timer;
 
 /**
  * @author palli
- * 
+ *
  * To change this generated comment edit the template variable "typecomment":
  * Window>Preferences>Java>Templates. To enable and disable the creation of type
  * comments go to Window>Preferences>Java>Code Generation.
@@ -54,13 +57,15 @@ import com.idega.util.Timer;
 public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implements NationalRegisterFileImportHandler,
 		ImportFileHandler {
 
+	private static final long serialVersionUID = -238506959496718436L;
+
 	private ImportFile file;
 
-	private ArrayList failedRecordList = new ArrayList();
+	private List<String> failedRecordList = new ArrayList<String>();
 
-	private ArrayList valueList;
+	private List<String> valueList;
 
-	private Collection affectedFamilies = new HashSet();
+	private Collection<String> affectedFamilies = new HashSet<String>();
 
 	public final static int COLUMN_SYMBOL = 0;
 
@@ -151,11 +156,11 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private boolean relationsOnly = false;
 
 	private boolean citizenGroupFix = false;
-	
+
 	private boolean skipRelations = false;
-	
+
 	private boolean skipDeceaced = false;
-	
+
 	private User performer = null;
 
 	private FamilyLogic famLog = null;
@@ -166,7 +171,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	private NumberFormat precentNF = NumberFormat.getPercentInstance();
 
-	private HashMap postalToGroupMap = new HashMap();
+	private Map<String, Group> postalToGroupMap = new HashMap<String, Group>();
 
 	private NationalRegisterBusiness natBiz;
 
@@ -181,6 +186,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	/**
 	 * @see com.idega.block.importer.business.ImportFileHandler#handleRecords()
 	 */
+	@Override
 	public boolean handleRecords() throws RemoteException {
 		// UserTransaction transaction =
 		// getSessionContext().getUserTransaction();
@@ -218,8 +224,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				this.performer = null;
 			}
 			if (this.performer == null) {
-				com.idega.core.user.data.User admUser = this.getIWMainApplication().getAccessController().getAdministratorUser();
-				this.performer = ((UserHome) IDOLookup.getHome(User.class)).findByPrimaryKey(admUser.getPrimaryKey());
+				com.idega.user.data.bean.User admUser = this.getIWMainApplication().getAccessController().getAdministratorUser();
+				this.performer = ((UserHome) IDOLookup.getHome(User.class)).findByPrimaryKey(admUser.getId());
 			}
 			// iterate through the records and process them
 			String item;
@@ -229,7 +235,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			String sGroup = bundle.getProperty(PROPERTY_NAME_GROUP_FIX);
 			String sSkipRelations = bundle.getProperty(PROPERTY_NAME_SKIP_RELATIONS);
 			String sSkipDead = bundle.getProperty(PROPERTY_NAME_SKIP_DECEASED);
-			this.affectedFamilies = new HashSet();
+			this.affectedFamilies = new HashSet<String>();
 			this.postalCodeFix = (sPostal != null && sPostal.equalsIgnoreCase("yes"));
 			this.relationsOnly = (sRelationOnly != null && sRelationOnly.equalsIgnoreCase("yes"));
 			this.citizenGroupFix = (sGroup != null && sGroup.equalsIgnoreCase("yes"));
@@ -304,6 +310,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		}
 	}
 
+	@Override
 	public String getTimeString(long time) {
 		long t = time;
 		int milli = (int) (t % 1000);
@@ -320,7 +327,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	 * After all lines in the import file has been imported, the relations are
 	 * handled. When the records are processed, the relations are stored in the
 	 * ArrayList _familyRelations
-	 * 
+	 *
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -348,17 +355,17 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			IWTimestamp stamp;
 			double progress = 0;
 			int intervalBetweenOutput = 100;
-			Iterator keysIter = this.affectedFamilies.iterator();
+			Iterator<String> keysIter = this.affectedFamilies.iterator();
 			String key;
 			int counter = 0;
-			Collection familyColl;
+			Collection<?> familyColl;
 			System.out.println("NatRegImport Total families to handle = " + totalRecords);
 			System.out.println("NatRegImport processing family relations RECORD [0] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
 			// Loop through all households/families
 			while (keysIter.hasNext()) {
 				++counter;
-				key = (String) keysIter.next();
+				key = keysIter.next();
 				try {
 					familyColl = getFamilyMemberHome().findAllByFamilyNR(key);
 					handleFamilyCollection(natReg, userHome, familyColl);
@@ -403,7 +410,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	}
 
 	/**
-	 * 
+	 *
 	 * @param natRegBus
 	 * @param familyLogic
 	 * @param uHome
@@ -419,9 +426,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			FamilyLogicBean memFamLog = (FamilyLogicBean) getServiceInstance(FamilyLogicBean.class);
 			NationalRegister natReg;
 			Iterator iter = coll.iterator();
-			Collection coll2 = new Vector(coll);
+			Collection coll2 = new ArrayList(coll);
 			Iterator iter2 = coll.iterator();
-			Collection parents = new Vector();
+			Collection parents = new ArrayList();
 			User user;
 			User user2;
 			Age age;
@@ -583,7 +590,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	/**
 	 * Removes the old relations that previousley were set but now aren't in the
 	 * import file and therefore should be removed
-	 * 
+	 *
 	 * @param user
 	 * @param rel
 	 * @throws RemoveException
@@ -671,11 +678,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		return success;
 	}
 
+	@Override
 	public void printFailedRecords() {
 		System.out.println("Import failed for these records, please fix and import again:");
-		Iterator iter = this.failedRecordList.iterator();
+		Iterator<String> iter = this.failedRecordList.iterator();
 		while (iter.hasNext()) {
-			System.out.println((String) iter.next());
+			System.out.println(iter.next());
 		}
 	}
 
@@ -687,10 +695,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		if (ssn == null || ssn.equals("")) {
 			return false;
 		}
-			
+
 		return this.natBiz.updateEntryAddress(ssn, addressName);
 	}
-	
+
 
 	protected boolean storeNationRegisterEntry() throws RemoteException, CreateException {
 		// variables
@@ -864,7 +872,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private Group getGroupForPostalCode(String po) throws RemoteException, CreateException {
 		// First see if it already has been fetched and stored in map. If so
 		// just return it
-		Group group = (Group) this.postalToGroupMap.get(po);
+		Group group = this.postalToGroupMap.get(po);
 		if (null != group) {
 			return group;
 		}
@@ -898,7 +906,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		String value = null;
 		if (this.valueList != null) {
 			try {
-				value = (String) this.valueList.get(columnIndex);
+				value = this.valueList.get(columnIndex);
 			}
 			catch (RuntimeException e) {
 				return null;
@@ -918,6 +926,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	/**
 	 * @see com.idega.block.importer.business.ImportFileHandler#setImportFile(com.idega.block.importer.data.ImportFile)
 	 */
+	@Override
 	public void setImportFile(ImportFile file) throws RemoteException {
 		this.file = file;
 	}
@@ -925,20 +934,24 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	/**
 	 * @see com.idega.block.importer.business.ImportFileHandler#setRootGroup(com.idega.user.data.Group)
 	 */
+	@Override
 	public void setRootGroup(Group rootGroup) throws RemoteException {
 	}
 
 	/**
 	 * @see com.idega.block.importer.business.ImportFileHandler#getFailedRecords()
 	 */
-	public List getFailedRecords() throws RemoteException {
+	@Override
+	public List<String> getFailedRecords() throws RemoteException {
 		return this.failedRecordList;
 	}
-	
-	public List getSuccessRecords() throws RemoteException {
-		return new ArrayList();
+
+	@Override
+	public List<String> getSuccessRecords() throws RemoteException {
+		return new ArrayList<String>();
 	}
 
+	@Override
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {
 		if (this.famLog == null) {
 			this.famLog = (FamilyLogic) IBOLookup.getServiceInstance(getIWApplicationContext(), FamilyLogic.class);
