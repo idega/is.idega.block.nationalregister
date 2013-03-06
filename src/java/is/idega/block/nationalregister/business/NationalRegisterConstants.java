@@ -1,7 +1,7 @@
 package is.idega.block.nationalregister.business;
 
 public class NationalRegisterConstants {
-	public static final String FATE_DECEASED = "deceased"; // LƒST
+	public static final String FATE_DECEASED = "deceased"; // LÂƒST
 
 	public final static String FATE_CHANGE_PERSONAL_ID = "change_pid"; // "BRFD";
 
