@@ -85,7 +85,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 		addAttribute(ADDRESS_CODE, "Logheimiliskodi", true, true, java.lang.String.class, 12);
 		addAttribute(DATE_OF_MODIFICATION, "Dagsetning breytinga", true, true, String.class, 6);
 		addAttribute(PLACEMENT_CODE, "Adseturskodi", true, true, String.class, 12);
-		addAttribute(DATE_OF_CREATION, "Dagsetning nàskr‡ningar", true, true, String.class, 6);
+		addAttribute(DATE_OF_CREATION, "Dagsetning nÃ skrÂ‡ningar", true, true, String.class, 6);
 		addAttribute(LAST_DOMESTIC_ADDRESS, "Sidasta logheimili a landinu", true, true, String.class, 12);
 		addAttribute(AGENT_SSN, "Kennitala umbodsmann", true, true, String.class, 10);
 		addAttribute(IS_NEW, "Nyr a skra", true, true, String.class, 1);
