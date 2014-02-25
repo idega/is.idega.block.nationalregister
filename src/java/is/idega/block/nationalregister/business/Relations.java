@@ -4,12 +4,13 @@ import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoChildrenFound;
 import is.idega.block.family.business.NoCustodianFound;
 import is.idega.block.family.business.NoParentFound;
-import is.idega.block.family.business.NoSiblingFound;
 import is.idega.block.family.business.NoSpouseFound;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import com.idega.business.IBOLookupException;
 import com.idega.user.data.User;
 
@@ -158,11 +159,7 @@ public class Relations{
 		catch (NoCustodianFound e) {
 		}
 
-		try {
-			this.sibling = this.memFamLog.getSiblingsFor(user);
-		}
-		catch (NoSiblingFound e) {
-		}
+		this.sibling = this.memFamLog.getSiblingsFor(user);
 	}
 
 	public static Relations inANotB(Relations a, Relations b, FamilyLogic famLoc) throws IllegalArgumentException {
