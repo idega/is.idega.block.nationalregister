@@ -44,6 +44,7 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.Timer;
 
@@ -253,6 +254,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			}
 			long totalBytes = this.file.getFile().length();
 			long totalRecords = totalBytes / BYTES_PER_RECORD;
+			if (totalRecords == 0) {
+				Collection<String> allRecords = this.file.getRecords();
+				totalRecords = ListUtil.isEmpty(allRecords) ? 1 : allRecords.size();
+			}
 			this.twoDigits.setMinimumIntegerDigits(2);
 			long beginTime = System.currentTimeMillis();
 			long lastTimeCheck = beginTime;
