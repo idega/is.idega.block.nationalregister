@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -193,26 +194,27 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		// getSessionContext().getUserTransaction();
 		Timer clock = new Timer();
 		clock.start();
+		Logger logger = getLogger();
 		try {
-			this.natBiz = (NationalRegisterBusiness) getServiceInstance(NationalRegisterBusiness.class);
-			this.uBiz = (UserBusiness) getServiceInstance(UserBusiness.class);
-			this.cBiz = (CommuneBusiness) getServiceInstance(CommuneBusiness.class);
+			this.natBiz = getServiceInstance(NationalRegisterBusiness.class);
+			this.uBiz = getServiceInstance(UserBusiness.class);
+			this.cBiz = getServiceInstance(CommuneBusiness.class);
 			if (FATE_DECEASED == null || FATE_CHANGE_PERSONAL_ID == null || FATE_REMOVED == null) {
 				NationalRegisterFate fate = ((NationalRegisterFateHome) IDOLookup.getHome(NationalRegisterFate.class)).findByFateCode(NationalRegisterConstants.FATE_DECEASED);
 				if (fate == null || fate.getFateString() == null || "".equals(fate.getFateString())) {
-					System.out.println("Missing DECEASED fate string in table reg_nat_is_fate");
+					logger.info("Missing DECEASED fate string in table reg_nat_is_fate");
 					return false;
 				}
 				FATE_DECEASED = fate.getFateString();
 				fate = ((NationalRegisterFateHome) IDOLookup.getHome(NationalRegisterFate.class)).findByFateCode(NationalRegisterConstants.FATE_CHANGE_PERSONAL_ID);
 				if (fate == null || fate.getFateString() == null || "".equals(fate.getFateString())) {
-					System.out.println("Missing CHANGE PERSONAL ID fate string in table reg_nat_is_fate");
+					logger.info("Missing CHANGE PERSONAL ID fate string in table reg_nat_is_fate");
 					return false;
 				}
 				FATE_CHANGE_PERSONAL_ID = fate.getFateString();
 				fate = ((NationalRegisterFateHome) IDOLookup.getHome(NationalRegisterFate.class)).findByFateCode(NationalRegisterConstants.FATE_REMOVED);
 				if (fate == null || fate.getFateString() == null || "".equals(fate.getFateString())) {
-					System.out.println("Missing REMOVED fate string in table reg_nat_is_fate");
+					logger.info("Missing REMOVED fate string in table reg_nat_is_fate");
 					return false;
 				}
 				FATE_REMOVED = fate.getFateString();
@@ -221,7 +223,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				this.performer = IWContext.getInstance().getCurrentUser();
 			}
 			catch (Exception n) {
-				System.out.println("NationalRegisterImporter iwcontext instance not found");
+				logger.info("NationalRegisterImporter iwcontext instance not found");
 				this.performer = null;
 			}
 			if (this.performer == null) {
@@ -244,13 +246,13 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			this.skipDeceaced = (sSkipDead != null && sSkipDead.equalsIgnoreCase("yes"));
 			int count = 0;
 			if (this.postalCodeFix) {
-				System.out.println("NationalRegisterHandler postalCodeFix variable set to TRUE");
+				logger.info("NationalRegisterHandler postalCodeFix variable set to TRUE");
 			}
 			if (this.relationsOnly) {
-				System.out.println("NationalRegisterHandler relationsOnly variable set to TRUE");
+				logger.info("NationalRegisterHandler relationsOnly variable set to TRUE");
 			}
 			if (this.citizenGroupFix) {
-				System.out.println("NationalRegisterHandler citizenGroupFix variable set to TRUE");
+				logger.info("NationalRegisterHandler citizenGroupFix variable set to TRUE");
 			}
 			long totalBytes = this.file.getFile().length();
 			long totalRecords = totalBytes / BYTES_PER_RECORD;
@@ -267,12 +269,17 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			IWTimestamp stamp;
 			double progress = 0;
 			int intervalBetweenOutput = 100;
-			System.out.println("NatRegImport processing RECORD [0] time: "
+			logger.info("NatRegImport processing RECORD [0] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
 			while (!(item = (String) this.file.getNextRecord()).equals("")) {
 				count++;
-				if (!processRecord(item)) {
-					this.failedRecordList.add(item);
+				try{
+					if (!processRecord(item)) {
+						this.failedRecordList.add(item);
+					}
+				}catch (Exception e) {
+					Exception b = e;//TODO: remove this
+//					logger.log(Level.WARNING, "Failed importing record :" + item, e);
 				}
 				if ((count % intervalBetweenOutput) == 0) {
 					averageTimePerUser100 = (System.currentTimeMillis() - lastTimeCheck) / intervalBetweenOutput;
@@ -280,22 +287,22 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					timeLeft100 = averageTimePerUser100 * (totalRecords - count);
 					estimatedTimeFinished100 = System.currentTimeMillis() + timeLeft100;
 					progress = ((double) count) / ((double) totalRecords);
-					System.out.print("NatRegImport " + IWTimestamp.getTimestampRightNow().toString()
+					logger.info("NatRegImport " + IWTimestamp.getTimestampRightNow().toString()
 							+ ", processing RECORD [" + count + " / " + totalRecords + "]");
 					stamp = new IWTimestamp(estimatedTimeFinished100);
-					System.out.println(" | " + this.precentNF.format(progress)
+					logger.info(" | " + this.precentNF.format(progress)
 							+ " done, guestimated time left of PHASE 1 : " + getTimeString(timeLeft100)
 							+ "  finish at " + stamp.getTime().toString());
 				}
 				item = null;
 			}
 			this.file.close();
-			System.out.println("NatRegImport processed RECORD [" + count + "] time: "
+			logger.info("NatRegImport processed RECORD [" + count + "] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
 			clock.stop();
 			long msTime = clock.getTime();
 			long secTime = msTime / 1000;
-			System.out.println("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging "
+			logger.info("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging "
 					+ (msTime / count) + "ms per record");
 			clock.start();
 			if (!this.skipRelations) {
@@ -304,7 +311,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			clock.stop();
 			msTime = clock.getTime();
 			secTime = msTime / 1000;
-			System.out.println("Time to handleFamilyRelation: " + clock.getTime() + " ms  OR "
+			logger.info("Time to handleFamilyRelation: " + clock.getTime() + " ms  OR "
 					+ ((int) (clock.getTime() / 1000)) + " s, averaging " + (msTime / count) + "ms per record");
 			printFailedRecords();
 			return true;
@@ -340,13 +347,14 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		UserHome userHome = null;
 		NationalRegisterBusiness natReg = null;
 		try {
-			natReg = (NationalRegisterBusiness) getServiceInstance(NationalRegisterBusiness.class);
-			UserBusiness userBusiness = (UserBusiness) getServiceInstance(UserBusiness.class);
+			natReg = getServiceInstance(NationalRegisterBusiness.class);
+			UserBusiness userBusiness = getServiceInstance(UserBusiness.class);
 			userHome = userBusiness.getUserHome();
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
+		Logger logger = getLogger();
 		if (this.affectedFamilies != null && userHome != null && natReg != null) {
 			long totalRecords = this.affectedFamilies.size();
 			long beginTime = System.currentTimeMillis();
@@ -364,8 +372,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			String key;
 			int counter = 0;
 			Collection<?> familyColl;
-			System.out.println("NatRegImport Total families to handle = " + totalRecords);
-			System.out.println("NatRegImport processing family relations RECORD [0] time: "
+			logger.info("NatRegImport Total families to handle = " + totalRecords);
+			logger.info("NatRegImport processing family relations RECORD [0] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
 			// Loop through all households/families
 			while (keysIter.hasNext()) {
@@ -376,7 +384,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					handleFamilyCollection(natReg, userHome, familyColl);
 				}
 				catch (Exception e) {
-					System.out.println("NatRegImport ERROR, familyRelation failed for family : " + key);
+					logger.info("NatRegImport ERROR, familyRelation failed for family : " + key);
 					e.printStackTrace();
 				}
 				if ((counter % intervalBetweenOutput) == 0) {
@@ -395,7 +403,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					System.out.print("NatRegImport " + IWTimestamp.getTimestampRightNow().toString()
 							+ ", processing family RECORD [" + counter + " / " + totalRecords + "]");
 					stamp = new IWTimestamp(estimatedTimeFinished);
-					System.out.println(" | " + this.precentNF.format(progress)
+					logger.info(" | " + this.precentNF.format(progress)
 							+ " done, guestimated time left of PHASE 2 : " + getTimeString(timeLeft) + "  finish at "
 							+ stamp.getTime().toString());
 					// stamp = new IWTimestamp(estimatedTimeFinished100);
@@ -408,7 +416,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					// IWTimestamp.getTimestampRightNow().toString());
 				}
 			}
-			System.out.println("NatRegImport processed family relations RECORD [" + counter + "] time: "
+			logger.info("NatRegImport processed family relations RECORD [" + counter + "] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
 		}
 		return true;
@@ -428,7 +436,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	private boolean handleFamilyCollection(NationalRegisterBusiness natRegBus, UserHome uHome, Collection coll)
 			throws RemoteException, RemoveException {
 		if (coll != null) {
-			FamilyLogicBean memFamLog = (FamilyLogicBean) getServiceInstance(FamilyLogicBean.class);
+			FamilyLogicBean memFamLog = getServiceInstance(FamilyLogicBean.class);
 			NationalRegister natReg;
 			Iterator iter = coll.iterator();
 			Collection coll2 = new ArrayList(coll);
@@ -456,11 +464,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			HashMap newrelations = new HashMap();
 			// Loop through all family members to figure out what the relations
 			// are
+			Logger logger = getLogger();
 			while (iter.hasNext()) {
 				member = (FamilyMember) iter.next();
 				user = member.getUser();
 				if (user == null) {
-					System.out.println(" user == null : " + member.getPrimaryKey());
+					logger.info(" user == null : " + member.getPrimaryKey());
 				}
 				if (user.getDateOfBirth() != null) {
 					age = new Age(user.getDateOfBirth());
@@ -959,7 +968,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	@Override
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {
 		if (this.famLog == null) {
-			this.famLog = (FamilyLogic) IBOLookup.getServiceInstance(getIWApplicationContext(), FamilyLogic.class);
+			this.famLog = IBOLookup.getServiceInstance(getIWApplicationContext(), FamilyLogic.class);
 		}
 		return this.famLog;
 	}

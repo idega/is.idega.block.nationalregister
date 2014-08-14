@@ -1,0 +1,26 @@
+
+<form 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:icore="http://xmlns.idega.com/com.idega.core"
+	xmlns:ifaces="http://xmlns.idega.com/com.idega.facelets"
+	onsubmit="return false;"
+	class="national_register_import">
+	<div>
+		<label>#{localizedStrings['is.idega.block.nationalregister']['enter_path']}</label>
+		<input type="text" name="file-path"/>
+	</div>
+	<div>
+		<button class="save-btn">#{localizedStrings['is.idega.block.nationalregister']['submit']}</button>
+	</div>
+	<!--
+	<script src="/dwr/engine.js"></script>
+	<script src="/dwr/interface/ImportFromFileServices.js"></script>
+	<script src="#{IWURIResource.res['/idegaweb/bundles/is.idega.block.nationalregister.bundle/resources/javascript/national_register_import.js']}"></script>
+	-->
+	<ifaces:addResource resourcePath="#{jQuery.bundleURIToJQueryLib}"></ifaces:addResource>
+	<ifaces:addResource resourcePath="/dwr/interface/ImportFromFileServices.js"></ifaces:addResource>
+	<ifaces:addResource resourcePath="/dwr/engine.js"></ifaces:addResource>
+	<ifaces:addResource resourcePath="#{IWURIResource.res['/idegaweb/bundles/is.idega.block.nationalregister.bundle/resources/javascript/national_register_import.js']}"></ifaces:addResource>
+</form>

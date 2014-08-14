@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -117,7 +118,7 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 	@Override
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {
 		if (this.famLog == null) {
-			this.famLog = (FamilyLogic) IBOLookup.getServiceInstance(
+			this.famLog = IBOLookup.getServiceInstance(
 					getIWApplicationContext(), FamilyLogic.class);
 		}
 		return this.famLog;
@@ -143,9 +144,9 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 		Timer clock = new Timer();
 		clock.start();
 		try {
-			this.natRegBiz = (NationalRegisterBusiness) getServiceInstance(NationalRegisterBusiness.class);
-			this.deceasedBiz = (NationalRegisterDeceasedBusiness) getServiceInstance(NationalRegisterDeceasedBusiness.class);
-			this.uBiz = (UserBusiness) getServiceInstance(UserBusiness.class);
+			this.natRegBiz = getServiceInstance(NationalRegisterBusiness.class);
+			this.deceasedBiz = getServiceInstance(NationalRegisterDeceasedBusiness.class);
+			this.uBiz = getServiceInstance(UserBusiness.class);
 
 			try {
 				this.performer = IWContext.getInstance().getCurrentUser();
@@ -197,10 +198,14 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 
 			System.out.println("NationalRegisterDeceasedImport processing RECORD [0] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
+			Logger logger = getLogger();
 			while (!(item = (String) this.file.getNextRecord()).equals("")) {
 				count++;
-				if (!processRecord(item)) {
-					this.failedRecordList.add(item);
+				try{
+					if (!processRecord(item)) {
+						this.failedRecordList.add(item);
+					}
+				}catch (Exception e) {
 				}
 				if ((count % intervalBetweenOutput) == 0) {
 					averageTimePerUser1000 = (System.currentTimeMillis() - lastTimeCheck)
@@ -213,13 +218,13 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 
 					progress = ((double) count) / ((double) totalRecords);
 
-					System.out.print("NatRegDeceasedImport "
+					logger.info("NatRegDeceasedImport "
 							+ IWTimestamp.getTimestampRightNow().toString()
 							+ ", processing RECORD [" + count + " / "
 							+ totalRecords + "]");
 
 					stamp = new IWTimestamp(estimatedTimeFinished100);
-					System.out.println(" | " + this.precentNF.format(progress)
+					logger.info(" | " + this.precentNF.format(progress)
 							+ " done, guestimated time left of PHASE : "
 							+ getTimeString(timeLeft1000) + "  finish at "
 							+ stamp.getTime().toString());
@@ -228,14 +233,14 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 				item = null;
 			}
 			this.file.close();
-			System.out.println("NationalRegisterDeceasedImport processed RECORD [" + count
+			logger.info("NationalRegisterDeceasedImport processed RECORD [" + count
 					+ "] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
 			clock.stop();
 			long msTime = clock.getTime();
 			long secTime = msTime / 1000;
 
-			System.out.println("Time to handleRecords: " + msTime + " ms  OR "
+			logger.info("Time to handleRecords: " + msTime + " ms  OR "
 					+ secTime + " s, averaging " + (msTime / count)
 					+ "ms per record");
 			printFailedRecords();
