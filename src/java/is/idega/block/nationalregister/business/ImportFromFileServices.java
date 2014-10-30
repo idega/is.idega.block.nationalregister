@@ -26,13 +26,14 @@ import com.idega.util.CoreUtil;
 }, name="ImportFromFileServices")
 public class ImportFromFileServices extends DefaultSpringBean{
 	public static final String BEAN_NAME = "importFromFileServices";
-	
+
 	private IWResourceBundle getIwrb(IWContext iwc) {
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(NationalRegisterConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		return iwrb;
 	}
+
 	@RemoteMethod
-	public String  importFromFile(String filePath){
+	public String importFromFile(String filePath){
 		IWContext iwc = CoreUtil.getIWContext();
 		IWResourceBundle iwrb = getIwrb(iwc);
 		try{
@@ -40,7 +41,7 @@ public class ImportFromFileServices extends DefaultSpringBean{
 				throw new Exception("Do not have permission");
 			}
 			NationalRegisterFileImportHandler handler =  new NationalRegisterFileImportHandlerBean();
-			
+
 			NationalRegisterImportFile file = new NationalRegisterImportFile();
 			file.setFile(new File(filePath));
 			handler.setImportFile(file);
@@ -51,4 +52,5 @@ public class ImportFromFileServices extends DefaultSpringBean{
 		}
 		return iwrb.getLocalizedString("error", "Error");
 	}
+
 }

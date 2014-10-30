@@ -1,11 +1,14 @@
 package is.idega.block.nationalregister.data;
 
 import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import com.idega.block.importer.data.GenericImportFile;
 import com.idega.block.importer.data.ImportFile;
+import com.idega.util.CoreConstants;
 
 /**
  * @author palli
@@ -20,40 +23,43 @@ public class NationalRegisterImportFile extends GenericImportFile implements Imp
 		super();
 		setRecordDilimiter("\n");
 	}
-	
+
 	public NationalRegisterImportFile(File file) {
 		this();
 		setFile(file);
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getRecords()
 	 */
+	@Override
 	public Collection getRecords() {
 		return super.getRecords();
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getValuesFromRecordString(java.lang.String)
 	 */
-	public ArrayList getValuesFromRecordString(String recordString) {
-		ArrayList values = new ArrayList();
+	@Override
+	public ArrayList<String> getValuesFromRecordString(String recordString) {
+		ArrayList<String> values = new ArrayList<String>();
 		for (int i = 0; i < 20; i++) {
 			String value = getValueAtIndexFromRecordString(i,recordString);
 			if (value != null) {
 				values.add(value);
 			}
 			else {
-				values.add("");
+				values.add(CoreConstants.EMPTY);
 			}
 		}
-		
+
 		return values;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see com.idega.block.importer.data.ImportFile#getValueAtIndexFromRecordString(int, java.lang.String)
 	 */
+	@Override
 	public String getValueAtIndexFromRecordString(int index, String recordString) {
 		try {
 			switch(index) {
