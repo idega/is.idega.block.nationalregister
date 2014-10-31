@@ -39,7 +39,7 @@ public class ImportFromFileServices extends DefaultSpringBean{
 			if(!iwc.isLoggedOn() || !iwc.getAccessController().isAdmin(iwc)){
 				throw new Exception("Do not have permission");
 			}
-			NationalRegisterFileImportHandler handler =  new NationalRegisterFileImportHandlerBean();
+			NationalRegisterFileImportHandlerBean handler =  new NationalRegisterFileImportHandlerBean();
 			
 			NationalRegisterImportFile file = new NationalRegisterImportFile();
 			file.setFile(new File(filePath));
