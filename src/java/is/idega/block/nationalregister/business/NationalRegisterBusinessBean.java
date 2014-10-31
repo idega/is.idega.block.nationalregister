@@ -33,26 +33,30 @@ import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 public class NationalRegisterBusinessBean extends IBOServiceBean implements NationalRegisterBusiness, UserGroupPlugInBusiness {
-	
+
+	private static final long serialVersionUID = 2198547874985154547L;
+
 	private static int icelandCountryPK = -1;
 	private static Gender maleGender = null;
 	private static Gender femaleGender = null;
-	private static HashMap postalCodes = null;
-	private static HashMap countryIDs = null;
-	private static HashMap communeCodes = null;
-	private static HashMap cityNames = null;
-	
+	private static HashMap<String, PostalCode> postalCodes = null;
+	private static HashMap<String, Country> countryIDs = null;
+	private static HashMap<String, Integer> communeCodes = null;
+	private static HashMap<String, String> cityNames = null;
+
+	@Override
 	public NationalRegister getEntryBySSN(String ssn) {
 		try {
-			Collection c = getNationalRegisterHome().findAllBySSN(ssn);
+			Collection<NationalRegister> c = getNationalRegisterHome().findAllBySSN(ssn);
 
 			if (c != null) {
-				Iterator it = c.iterator();
+				Iterator<NationalRegister> it = c.iterator();
 				if (it.hasNext()) {
-					return (NationalRegister) it.next();
+					return it.next();
 				}
 			}
 		}
@@ -66,24 +70,20 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		return null;
 	}
 
-	public boolean updateEntryAddress(
-			String ssn,
-			String addressName) {
-
-			
-			
-				
-				NationalRegister reg = getEntryBySSN(ssn);
-				if (reg != null) {
-					reg.setAddressName(addressName);
-					reg.store();
-					return true;
-				}
-
-				return false;
+	@Override
+	public boolean updateEntryAddress(String ssn, String addressName) {
+		NationalRegister reg = getEntryBySSN(ssn);
+		if (reg != null) {
+			reg.setAddressName(addressName);
+			reg.store();
+			return true;
 		}
 
-	
+		return false;
+	}
+
+
+	@Override
 	public boolean updateEntry(
 		String symbol,
 		String oldId,
@@ -116,14 +116,14 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		String addressName,
 		String dateOfDeletion,
 		String newSsnOrName,
-		String dateOfBirth	, 
+		String dateOfBirth	,
 		Group citizenGroup) {
 
-		
-		
-			
+
+
+
 		try {
-			UserBusiness userBiz = (UserBusiness) getServiceInstance(UserBusiness.class);	
+			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
 			NationalRegister reg = getEntryBySSN(ssn);
 			if (reg == null) {
 				reg = getNationalRegisterHome().create();
@@ -158,15 +158,15 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			reg.setDateOfDeletion(dateOfDeletion);
 			reg.setNewSsnOrName(newSsnOrName);
 			reg.setDateOfBirth(dateOfBirth);
-			
+
 			reg.store();
-			
+
 			IWTimestamp t = new IWTimestamp();
-			
+
 			String day = ssn.substring(0,2);
 			String month = ssn.substring(2,4);
 			String year = ssn.substring(4,6);
-				
+
 			int iDay = Integer.parseInt(day);
 			int iMonth = Integer.parseInt(month);
 			int iYear = Integer.parseInt(year);
@@ -186,7 +186,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			t.setDay(iDay);
 			t.setMonth(iMonth);
 			t.setYear(iYear);
-			
+
 			Gender gender = getGender(sex);
 
 			User user = userBiz.createUserByPersonalIDIfDoesNotExist(name,ssn,gender,t);
@@ -204,8 +204,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 					log("Changing user's name to "+newSsnOrName);
 				}
 			}
-			
-			
+
+
 			Country country = null;
 			Integer communeID = null;
 			String city = null;
@@ -217,9 +217,9 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				communeID = getCommuneIDFromCommuneCode(commune);
 				city = getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString()));
 			}
-			
+
 			updateUserAddress(user, userBiz, address, po, country, city, communeID, addressName);
-			
+
 			if (citizenGroup != null) {
 				citizenGroup.addGroup(user);
 				user.setPrimaryGroup(citizenGroup);
@@ -228,7 +228,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 			user.setLastReadFromImport(IWTimestamp.getTimestampRightNow());
 			user.store();
-			
+
 			FamilyLogic familyLogic = getFamilyLogic();
 			familyLogic.updateFamilyForUser(familyId, user);
 
@@ -250,7 +250,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 		return true;
 	}
-	
+
+	@Override
 	public void updateUserPersonalID(String oldPersonalID, String newPersonalID) throws IBOLookupException{
 		NationalRegister reg = getEntryBySSN(oldPersonalID);
 
@@ -259,7 +260,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			reg.store();
 		}
 	}
-	
+
+	@Override
 	public void updateUserOldID(String oldID, String personalID) throws IBOLookupException{
 		NationalRegister reg = getEntryBySSN(personalID);
 
@@ -268,7 +270,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			reg.store();
 		}
 	}
-	
+
+	@Override
 	public void updateUserAddress(User user, UserBusiness userBiz, String address, String po, Country country, String city, Integer communeID, String addressName) throws RemoteException, CreateException {
 		PostalCode postalCode = getPostalCode(po);
 
@@ -284,28 +287,28 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		}
 	}
 
+	@Override
 	public PostalCode getPostalCode(String po) throws RemoteException {
 		if (postalCodes == null) {
-			postalCodes = new HashMap();
+			postalCodes = new HashMap<String, PostalCode>();
 		}
-		
-		if (po != null && !po.trim().equals("")) {
+
+		if (po != null && !po.trim().equals(CoreConstants.EMPTY)) {
 			if (postalCodes.containsKey(po)) {
-				return (PostalCode) postalCodes.get(po);
+				return postalCodes.get(po);
 			} else {
-				try {				
-					PostalCode poCode = ((PostalCodeHome)getIDOHome(PostalCode.class)).findByPostalCodeAndCountryId(po,getIcelandicCountryPK());
+				try {
+					PostalCode poCode = ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPostalCodeAndCountryId(po, getIcelandicCountryPK());
 					postalCodes.put(po, poCode);
-					System.out.println("NationalRegisterBusinessBean : looking up postal code "+po);
+					System.out.println("NationalRegisterBusinessBean: looking up postal code " + po);
 					return poCode;
-				}
-				catch(FinderException e) {
+				} catch(FinderException e) {
 					postalCodes.put(po, null);
-					System.out.println("NationalRegisterBusinessBean : looking up postal code NULL");
+					System.out.println("NationalRegisterBusinessBean: did not found postal code entity for code '" + po + "'!");
 					return null;
 				}
 			}
-		} 
+		}
 		return null;
 	}
 
@@ -323,7 +326,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		}	else {
 			return femaleGender;
 		}
-		
+
 	}
 
 	private int getIcelandicCountryPK() throws RemoteException, FinderException {
@@ -350,31 +353,36 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#beforeUserRemove(com.idega.user.data.User)
 	 */
+	@Override
 	public void beforeUserRemove(User user, Group parentGroup) throws RemoveException, RemoteException {
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#afterUserCreate(com.idega.user.data.User)
 	 */
+	@Override
 	public void afterUserCreateOrUpdate(User user, Group parentGroup) throws CreateException, RemoteException {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#beforeGroupRemove(com.idega.user.data.Group)
 	 */
+	@Override
 	public void beforeGroupRemove(Group group, Group parentGroup) throws RemoveException, RemoteException {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#afterGroupCreate(com.idega.user.data.Group)
 	 */
+	@Override
 	public void afterGroupCreateOrUpdate(Group group, Group parentGroup) throws CreateException, RemoteException {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#instanciateEditor(com.idega.user.data.Group)
 	 */
+	@Override
 	public PresentationObject instanciateEditor(Group group) throws RemoteException {
 		return null;
 	}
@@ -382,6 +390,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#instanciateViewer(com.idega.user.data.Group)
 	 */
+	@Override
 	public PresentationObject instanciateViewer(Group group) throws RemoteException {
 		return null;
 	}
@@ -389,6 +398,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getUserPropertiesTabs(com.idega.user.data.User)
 	 */
+	@Override
 	public List getUserPropertiesTabs(User user) throws RemoteException {
 		return null;
 	}
@@ -396,6 +406,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getGroupPropertiesTabs(com.idega.user.data.Group)
 	 */
+	@Override
 	public List getGroupPropertiesTabs(Group group) throws RemoteException {
 		return null;
 	}
@@ -403,6 +414,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getMainToolbarElements()
 	 */
+	@Override
 	public List getMainToolbarElements() throws RemoteException {
 		List list = new ArrayList(1);
 		list.add(new NationalRegisterFileImportHandlerPlugin());
@@ -412,6 +424,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#getGroupToolbarElements(com.idega.user.data.Group)
 	 */
+	@Override
 	public List getGroupToolbarElements(Group group) throws RemoteException {
 		return null;
 	}
@@ -419,6 +432,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#isUserAssignableFromGroupToGroup(com.idega.user.data.User, com.idega.user.data.Group, com.idega.user.data.Group)
 	 */
+	@Override
 	public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup) throws RemoteException {
 		return null;
 	}
@@ -426,17 +440,20 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#isUserSuitedForGroup(com.idega.user.data.User, com.idega.user.data.Group)
 	 */
+	@Override
 	public String isUserSuitedForGroup(User user, Group targetGroup) throws RemoteException {
 		return null;
 	}
 
+	@Override
 	public FamilyLogic getFamilyLogic() throws RemoteException {
-		return (FamilyLogic) IBOLookup.getServiceInstance(getIWApplicationContext(), FamilyLogic.class);
+		return IBOLookup.getServiceInstance(getIWApplicationContext(), FamilyLogic.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusiness#getPresentationObjectClass()
 	 */
+	@Override
 	public Class getPresentationObjectClass() throws RemoteException {
 		return null;
 	}
@@ -444,6 +461,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusiness#getListViewerFields()
 	 */
+	@Override
 	public Collection getListViewerFields() throws RemoteException {
 		return null;
 	}
@@ -451,6 +469,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusiness#findGroupsByFields(java.util.Collection, java.util.Collection, java.util.Collection)
 	 */
+	@Override
 	public Collection findGroupsByFields(Collection listViewerFields, Collection finderOperators, Collection listViewerFieldValues) throws RemoteException {
 		return null;
 	}
@@ -458,18 +477,20 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#canCreateSubGroup(com.idega.user.data.Group,java.lang.String)
 	 */
+	@Override
 	public String canCreateSubGroup(Group group, String groupTypeOfSubGroup) throws RemoteException {
 		return null;
 	}
 
+	@Override
 	public Country getCountryByISOAbbreviation(String isoAbbreviation) {
 		if (countryIDs == null) {
-			countryIDs = new HashMap();
+			countryIDs = new HashMap<String, Country>();
 		}
 
 		if (countryIDs.containsKey(isoAbbreviation)) {
-			return (Country) countryIDs.get(isoAbbreviation);
-		} 
+			return countryIDs.get(isoAbbreviation);
+		}
 		else {
 			try {
 				CountryHome home = (CountryHome) getIDOHome(Country.class);
@@ -486,21 +507,23 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		}
 	}
 
+	@Override
 	public Integer getCommuneIDFromCommuneCode(String communeCode) {
 		if (communeCodes == null) {
-			communeCodes = new HashMap();
+			communeCodes = new HashMap<String, Integer>();
 		}
 
 		if (communeCodes.containsKey(communeCode)) {
-			return (Integer) communeCodes.get(communeCode);
-		} 
+			return communeCodes.get(communeCode);
+		}
 		else {
 
 			try {
 				CommuneHome home = (CommuneHome) getIDOHome(Commune.class);
 				Commune commune = home.findByCommuneCode(communeCode);
-				communeCodes.put(communeCode, commune.getPrimaryKey());
-				return (Integer)commune.getPrimaryKey();
+				Integer prKey = (Integer)commune.getPrimaryKey();
+				communeCodes.put(communeCode, prKey);
+				return prKey;
 			}
 			catch (FinderException fe) {
 				return null;
@@ -511,9 +534,10 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		}
 	}
 
+	@Override
 	public String getCityFromPostalCode(String postalCodeIdentifier, int countryID ) {
 		if (cityNames == null) {
-			cityNames = new HashMap();
+			cityNames = new HashMap<String, String>();
 		}
 
 		if (postalCodeIdentifier == null || postalCodeIdentifier.equals("   ")) {
@@ -521,8 +545,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		}
 
 		if (cityNames.containsKey(postalCodeIdentifier)) {
-			return (String) cityNames.get(postalCodeIdentifier);
-		} 
+			return cityNames.get(postalCodeIdentifier);
+		}
 		else {
 			try {
 				PostalCodeHome home = (PostalCodeHome) getIDOHome(PostalCode.class);

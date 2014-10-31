@@ -1,6 +1,6 @@
 package is.idega.block.nationalregister.business;
 
-import is.idega.block.nationalregister.data.NationalRegisterImportFile;
+import is.idega.block.nationalregister.data.NationalRegisterImportFileE36;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -40,9 +40,9 @@ public class ImportFromFileServices extends DefaultSpringBean{
 			if(!iwc.isLoggedOn() || !iwc.getAccessController().isAdmin(iwc)){
 				throw new Exception("Do not have permission");
 			}
-			NationalRegisterFileImportHandler handler =  new NationalRegisterFileImportHandlerBean();
+			NationalRegisterFileImportHandler handler = new NationalRegisterFileImportHandlerBean();
 
-			NationalRegisterImportFile file = new NationalRegisterImportFile();
+			NationalRegisterImportFileE36 file = new NationalRegisterImportFileE36();
 			file.setFile(new File(filePath));
 			handler.setImportFile(file);
 			handler.handleRecords();

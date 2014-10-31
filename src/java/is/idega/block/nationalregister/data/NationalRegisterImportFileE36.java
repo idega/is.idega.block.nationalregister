@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import com.idega.block.importer.data.GenericImportFile;
 import com.idega.block.importer.data.ImportFile;
+import com.idega.util.CoreConstants;
 
 /**
  * @author gimmi
@@ -20,46 +21,49 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 		super();
 		setRecordDilimiter("\n");
 	}
-	
+
 	public NationalRegisterImportFileE36(File file) {
 		this();
 		setFile(file);
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getRecords()
 	 */
+	@Override
 	public Collection getRecords() {
 		return super.getRecords();
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getValuesFromRecordString(java.lang.String)
 	 */
-	public ArrayList getValuesFromRecordString(String recordString) {
+	@Override
+	public ArrayList<String> getValuesFromRecordString(String recordString) {
 		if (recordString != null && recordString.length() < NUMBER_OF_LETTERS_PER_LINE)
 			throw new RuntimeException("Numbers of letters in the record string was too low. According to standard it should be " + NUMBER_OF_LETTERS_PER_LINE + ", but was " + recordString.length());
-		ArrayList values = new ArrayList();
+		ArrayList<String> values = new ArrayList<String>();
 		for (int i = 0; i < 28; i++) {
 			String value = getValueAtIndexFromRecordString(i,recordString);
 			if (value != null) {
 				values.add(value);
 			}
 			else {
-				values.add("");
+				values.add(CoreConstants.EMPTY);
 			}
 		}
-		
+
 		return values;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see com.idega.block.importer.data.ImportFile#getValueAtIndexFromRecordString(int, java.lang.String)
 	 */
-/*	
+/*
 FE        01010124701604745569pCcr gcvpitCCwv uoBo      00101000008700081   31   IS000001012001Ísak Miri Daníelsson                     000008700081                                                        107Birkimelur 8a        Birkimel 8a
-FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  BIS600001011944Sigurður Sigfússon             3108474029               100709                                                  Drekagil 28                                                      LÉST100709                  
-*/                         
+FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  BIS600001011944Sigurður Sigfússon             3108474029               100709                                                  Drekagil 28                                                      LÉST100709
+*/
+	@Override
 	public String getValueAtIndexFromRecordString(int index, String recordString) {
 		try {
 			switch(index) {
@@ -99,6 +103,7 @@ FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  
 		}
 	}
 
+	@Override
 	public String getEncoding() {
 		return "ISO-8859-1";
 	}

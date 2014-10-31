@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
@@ -269,8 +270,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			IWTimestamp stamp;
 			double progress = 0;
 			int intervalBetweenOutput = 100;
-			logger.info("NatRegImport processing RECORD [0] time: "
-					+ IWTimestamp.getTimestampRightNow().toString());
+			logger.info("NatRegImport processing RECORD [0] time: " + IWTimestamp.getTimestampRightNow().toString());
 			while (!(item = (String) this.file.getNextRecord()).equals("")) {
 				count++;
 				try{
@@ -278,8 +278,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 						this.failedRecordList.add(item);
 					}
 				}catch (Exception e) {
-					Exception b = e;//TODO: remove this
-//					logger.log(Level.WARNING, "Failed importing record :" + item, e);
+					logger.log(Level.WARNING, "Failed importing record :" + item, e);
 				}
 				if ((count % intervalBetweenOutput) == 0) {
 					averageTimePerUser100 = (System.currentTimeMillis() - lastTimeCheck) / intervalBetweenOutput;
