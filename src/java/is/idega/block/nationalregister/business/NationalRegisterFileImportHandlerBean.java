@@ -915,7 +915,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		return group;
 	}
 
-	private String getProperty(int columnIndex) {
+	protected String getProperty(int columnIndex) {
 		String value = null;
 		if (this.valueList != null) {
 			try {
