@@ -21,111 +21,111 @@ import com.idega.user.data.User;
 public class Relations{
 	private User user = null;
 	private User spouse = null;
-	private Collection child = new ArrayList();
-	private Collection parent = new ArrayList();
-	private Collection isCustodianFor = new ArrayList();
-	private Collection hasCustodian = new ArrayList();
-	private Collection sibling = new ArrayList();
+	private Collection<User> child = new ArrayList<User>();
+	private Collection<User> parent = new ArrayList<User>();
+	private Collection<User> isCustodianFor = new ArrayList<User>();
+	private Collection<User> hasCustodian = new ArrayList<User>();
+	private Collection<User> sibling = new ArrayList<User>();
 	private FamilyLogic memFamLog = null;
-	
+
 	public Relations(FamilyLogic famLog) {
 		this.memFamLog = famLog;
 	}
-	
+
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 	public void setSpouse(User spouse) {
 		this.spouse = spouse;
 	}
-	
+
 	public void addChild(User child) {
 		if (!this.child.contains(child)) {
 			this.child.add(child);
 		}
 	}
-	
+
 	public void addParent(User parent) {
 		if (!this.parent.contains(parent)) {
 			this.parent.add(parent);
 		}
 	}
-	
+
 	public void addIsCustodianFor(User user) {
 		if (!this.isCustodianFor.contains(user)) {
 			this.isCustodianFor.add(user);
 		}
 	}
-	
+
 	public void addHasCustodian(User user) {
 		if (!this.hasCustodian.contains(user)) {
 			this.hasCustodian.add(user);
 		}
-	}	
-	
+	}
+
 	public void addSibling(User user) {
 		if (!this.sibling.contains(user)) {
 			this.sibling.add(user);
 		}
-	}		
+	}
 
 	public User getSpouse() {
 		return this.spouse;
 	}
-	
-	public Collection getHasCustodians() {
+
+	public Collection<User> getHasCustodians() {
 		return this.hasCustodian;
 	}
-	
-	public Collection getIsCustodianFor() {
+
+	public Collection<User> getIsCustodianFor() {
 		return this.isCustodianFor;
 	}
-	
-	public Collection getParents() {
+
+	public Collection<User> getParents() {
 		return this.parent;
 	}
-	
-	public Collection getSiblings() {
+
+	public Collection<User> getSiblings() {
 		return this.sibling;
 	}
-	
-	public Collection getChildren() {
+
+	public Collection<User> getChildren() {
 		return this.child;
 	}
-	
+
 	public void dumpInfo(){
 		System.out.println("Relations for user "+this.user.getName()+" - "+this.user.getPersonalID());
 		if(null!=this.spouse){
 			System.out.println("spouse: "+this.spouse+" - "+this.spouse.getPersonalID());
 		}
-		Iterator iter = this.child.iterator();
+		Iterator<User> iter = this.child.iterator();
 		while(iter.hasNext()){
-			User user = (User)iter.next();
+			User user = iter.next();
 			System.out.println("child: "+user.getName()+" - "+user.getPersonalID());
 		}
 		iter = this.parent.iterator();
 		while(iter.hasNext()){
-			User user = (User)iter.next();
+			User user = iter.next();
 			System.out.println("parent: "+user.getName()+" - "+user.getPersonalID());
 		}
 		iter = this.isCustodianFor.iterator();
 		while(iter.hasNext()){
-			User user = (User)iter.next();
+			User user = iter.next();
 			System.out.println("is custodian for: "+user.getName()+" - "+user.getPersonalID());
 		}
 		iter = this.hasCustodian.iterator();
 		while(iter.hasNext()){
-			User user = (User)iter.next();
+			User user = iter.next();
 			System.out.println("has custodian: "+user.getName()+" - "+user.getPersonalID());
 		}
 		iter = this.sibling.iterator();
 		while(iter.hasNext()){
-			User user = (User)iter.next();
+			User user = iter.next();
 			System.out.println("sibling: "+user.getName()+" - "+user.getPersonalID());
 		}
 	}
-	
+
 	public void setForUser(User user) throws IBOLookupException, RemoteException{
 		this.user = user;
 		try {
@@ -146,13 +146,13 @@ public class Relations{
 		}
 		catch (NoParentFound e) {
 		}
-		
+
 		try {
 			this.isCustodianFor = this.memFamLog.getChildrenInCustodyOf(user);
 		}
 		catch (NoChildrenFound e) {
 		}
-		
+
 		try {
 			this.hasCustodian = this.memFamLog.getCustodiansFor(user);
 		}
@@ -170,18 +170,18 @@ public class Relations{
 			c.user = a.user;
 		}
 		c.spouse = a.spouse;
-		c.child = new ArrayList(a.child);
-		c.hasCustodian = new ArrayList(a.hasCustodian);
-		c.isCustodianFor = new ArrayList(a.isCustodianFor);
-		c.parent = new ArrayList(a.parent);
-		c.sibling = new ArrayList(a.sibling);
-		
+		c.child = new ArrayList<User>(a.child);
+		c.hasCustodian = new ArrayList<User>(a.hasCustodian);
+		c.isCustodianFor = new ArrayList<User>(a.isCustodianFor);
+		c.parent = new ArrayList<User>(a.parent);
+		c.sibling = new ArrayList<User>(a.sibling);
+
 
 		if (a.spouse != null && a.spouse.equals(b.spouse)) {
 			c.spouse = null;
 		}
-		
-		Iterator iter = b.child.iterator();
+
+		Iterator<User> iter = b.child.iterator();
 		while (iter.hasNext()) {
 			c.child.remove(iter.next());
 		}
@@ -201,7 +201,7 @@ public class Relations{
 		while (iter.hasNext()) {
 			c.sibling.remove(iter.next());
 		}
-		
+
 		return c;
 	}
 }

@@ -140,7 +140,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	private final static String PROPERTY_NAME_SKIP_RELATIONS = "NAT_REG_SKIP_REL";
 
-	private final static String PROPERTY_NAME_SKIP_DECEASED = "NAT_REG_SKIP_DEAD";
+//	private final static String PROPERTY_NAME_SKIP_DECEASED = "NAT_REG_SKIP_DEAD";
 
 	/*
 	 * private final static String FATE_DECEASED = "L�ST"; private final static
@@ -162,7 +162,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	private boolean skipRelations = false;
 
-	private boolean skipDeceaced = false;
+//	private boolean skipDeceaced = false;
 
 	private User performer = null;
 
@@ -238,13 +238,13 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			String sPostal = bundle.getProperty(PROPERTY_NAME_POSTAL_CODE_FIX);
 			String sGroup = bundle.getProperty(PROPERTY_NAME_GROUP_FIX);
 			String sSkipRelations = bundle.getProperty(PROPERTY_NAME_SKIP_RELATIONS);
-			String sSkipDead = bundle.getProperty(PROPERTY_NAME_SKIP_DECEASED);
+//			String sSkipDead = bundle.getProperty(PROPERTY_NAME_SKIP_DECEASED);
 			this.affectedFamilies = new HashSet<String>();
 			this.postalCodeFix = (sPostal != null && sPostal.equalsIgnoreCase("yes"));
 			this.relationsOnly = (sRelationOnly != null && sRelationOnly.equalsIgnoreCase("yes"));
 			this.citizenGroupFix = (sGroup != null && sGroup.equalsIgnoreCase("yes"));
 			this.skipRelations = (sSkipRelations != null && sSkipRelations.equalsIgnoreCase("yes"));
-			this.skipDeceaced = (sSkipDead != null && sSkipDead.equalsIgnoreCase("yes"));
+//			this.skipDeceaced = (sSkipDead != null && sSkipDead.equalsIgnoreCase("yes"));
 			int count = 0;
 			if (this.postalCodeFix) {
 				logger.info("NationalRegisterHandler postalCodeFix variable set to TRUE");
@@ -370,7 +370,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			Iterator<String> keysIter = this.affectedFamilies.iterator();
 			String key;
 			int counter = 0;
-			Collection<?> familyColl;
+			Collection<FamilyMember> familyColl;
 			logger.info("NatRegImport Total families to handle = " + totalRecords);
 			logger.info("NatRegImport processing family relations RECORD [0] time: "
 					+ IWTimestamp.getTimestampRightNow().toString());
@@ -432,15 +432,15 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	 * @throws RemoveException
 	 * @throws RemoteException
 	 */
-	private boolean handleFamilyCollection(NationalRegisterBusiness natRegBus, UserHome uHome, Collection coll)
+	private boolean handleFamilyCollection(NationalRegisterBusiness natRegBus, UserHome uHome, Collection<FamilyMember> coll)
 			throws RemoteException, RemoveException {
 		if (coll != null) {
 			FamilyLogicBean memFamLog = getServiceInstance(FamilyLogicBean.class);
 			NationalRegister natReg;
-			Iterator iter = coll.iterator();
-			Collection coll2 = new ArrayList(coll);
-			Iterator iter2 = coll.iterator();
-			Collection parents = new ArrayList();
+			Iterator<FamilyMember> iter = coll.iterator();
+			Collection<FamilyMember> coll2 = new ArrayList<FamilyMember>(coll);
+			Iterator<FamilyMember> iter2 = coll.iterator();
+			Collection<User> parents = new ArrayList<User>();
 			User user;
 			User user2;
 			Age age;
@@ -459,13 +459,13 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			Relations newRelations1 = new Relations(getMemberFamilyLogic());
 			Relations oldRelations2 = new Relations(getMemberFamilyLogic());
 			Relations newRelations2 = new Relations(getMemberFamilyLogic());
-			HashMap oldrelations = new HashMap();
-			HashMap newrelations = new HashMap();
+			HashMap<User, Relations> oldrelations = new HashMap<User, Relations>();
+			HashMap<User, Relations> newrelations = new HashMap<User, Relations>();
 			// Loop through all family members to figure out what the relations
 			// are
 			Logger logger = getLogger();
 			while (iter.hasNext()) {
-				member = (FamilyMember) iter.next();
+				member = iter.next();
 				user = member.getUser();
 				if (user == null) {
 					logger.info(" user == null : " + member.getPrimaryKey());
@@ -516,7 +516,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			iter = coll.iterator();
 			FamilyMember member2;
 			while (iter.hasNext()) {
-				member = (FamilyMember) iter.next();
+				member = iter.next();
 				user = member.getUser();
 				if (oldrelations.get(user) == null) {
 					oldRelations1 = new Relations(getMemberFamilyLogic());
@@ -529,12 +529,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					newrelations.put(user, newRelations1);
 				}
 				else {
-					newRelations1 = ((Relations) newrelations.get(user));
+					newRelations1 = newrelations.get(user);
 				}
 				coll2.remove(member);
 				iter2 = coll2.iterator();
 				while (iter2.hasNext()) {
-					member2 = (FamilyMember) iter2.next();
+					member2 = iter2.next();
 					user2 = member2.getUser();
 					if (oldrelations.get(user2) == null) {
 						oldRelations2 = new Relations(getMemberFamilyLogic());
@@ -547,7 +547,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 						newrelations.put(user2, newRelations2);
 					}
 					else {
-						newRelations2 = ((Relations) newrelations.get(user2));
+						newRelations2 = newrelations.get(user2);
 					}
 					if (parents.contains(user)) {
 						if (parents.contains(user2)) {
@@ -575,12 +575,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					}
 				}
 			}
-			Set set = newrelations.keySet();
-			Iterator newSetIt = set.iterator();
+			Set<User> set = newrelations.keySet();
+			Iterator<User> newSetIt = set.iterator();
 			while (newSetIt.hasNext()) {
-				User tmpuser = (User) newSetIt.next();
-				Relations newR = (Relations) newrelations.get(tmpuser);
-				Relations oldR = (Relations) oldrelations.get(tmpuser);
+				User tmpuser = newSetIt.next();
+				Relations newR = newrelations.get(tmpuser);
+				Relations oldR = oldrelations.get(tmpuser);
 				/*
 				 * System.out.println("NEW"); newR.dumpInfo();
 				 * System.out.println("OLD"); oldR.dumpInfo();
@@ -619,35 +619,50 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			memFamLog.removeAsSpouseFor(user, rel.getSpouse(), this.performer);
 		}
 		// Remove from collections
-		Iterator iter = rel.getChildren().iterator();
+		Iterator<User> iter = rel.getChildren().iterator();
 		while (iter.hasNext()) {
-			User child = (User) iter.next();
+			User child = iter.next();
 			memFamLog.removeAsChildFor(child, user, this.performer);
 		}
 		iter = rel.getIsCustodianFor().iterator();
 		while (iter.hasNext()) {
-			User child = (User) iter.next();
+			User child = iter.next();
 			memFamLog.removeAsCustodianFor(user, child, this.performer);
 		}
 		iter = rel.getHasCustodians().iterator();
 		while (iter.hasNext()) {
-			User custodian = (User) iter.next();
+			User custodian = iter.next();
 			memFamLog.removeAsCustodianFor(custodian, user, this.performer);
 		}
 		iter = rel.getParents().iterator();
 		while (iter.hasNext()) {
-			User parent = (User) iter.next();
+			User parent = iter.next();
 			memFamLog.removeAsParentFor(parent, user, this.performer);
 		}
 		iter = rel.getSiblings().iterator();
 		while (iter.hasNext()) {
-			User sibling = (User) iter.next();
+			User sibling = iter.next();
 			memFamLog.removeAsSiblingFor(user, sibling, this.performer);
 		}
 	}
 
-	private void addNewRelations(FamilyLogicBean memFamLog, User user, Relations rel) throws RemoveException,
-			RemoteException, CreateException {
+	private boolean isAllowedDeceasedPersonInFamilyRelations() {
+		return getIWMainApplication().getSettings().getBoolean("nr.import_allow_deceased", Boolean.FALSE);
+	}
+
+	private boolean isAllowedToAddToFamily(User user) {
+		if (user == null) {
+			return false;
+		}
+
+		if (!user.isDeceased()) {
+			return true;
+		}
+
+		return isAllowedDeceasedPersonInFamilyRelations();
+	}
+
+	private void addNewRelations(FamilyLogicBean memFamLog, User user, Relations rel) throws RemoveException, RemoteException, CreateException {
 		// NationalRegisterBusiness natRegBus;
 		// remove spouse
 		// System.out.println("ADDING");
@@ -656,30 +671,40 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			memFamLog.setAsSpouseFor(user, rel.getSpouse());
 		}
 		// Remove from collections
-		Iterator iter = rel.getChildren().iterator();
+		Iterator<User> iter = rel.getChildren().iterator();
 		while (iter.hasNext()) {
-			User child = (User) iter.next();
-			memFamLog.setAsChildFor(child, user);
+			User child = iter.next();
+			if (isAllowedToAddToFamily(child)) {
+				memFamLog.setAsChildFor(child, user);
+			}
 		}
 		iter = rel.getIsCustodianFor().iterator();
 		while (iter.hasNext()) {
-			User child = (User) iter.next();
-			memFamLog.setAsCustodianFor(user, child);
+			User child = iter.next();
+			if (isAllowedToAddToFamily(child)) {
+				memFamLog.setAsCustodianFor(user, child);
+			}
 		}
 		iter = rel.getHasCustodians().iterator();
 		while (iter.hasNext()) {
-			User custodian = (User) iter.next();
-			memFamLog.setAsCustodianFor(custodian, user);
+			User custodian = iter.next();
+			if (isAllowedToAddToFamily(user)) {
+				memFamLog.setAsCustodianFor(custodian, user);
+			}
 		}
 		iter = rel.getParents().iterator();
 		while (iter.hasNext()) {
-			User parent = (User) iter.next();
-			memFamLog.setAsParentFor(parent, user);
+			User parent = iter.next();
+			if (isAllowedToAddToFamily(user)) {
+				memFamLog.setAsParentFor(parent, user);
+			}
 		}
 		iter = rel.getSiblings().iterator();
 		while (iter.hasNext()) {
-			User sibling = (User) iter.next();
-			memFamLog.setAsSiblingFor(user, sibling);
+			User sibling = iter.next();
+			if (isAllowedToAddToFamily(user)) {
+				memFamLog.setAsSiblingFor(user, sibling);
+			}
 		}
 	}
 
