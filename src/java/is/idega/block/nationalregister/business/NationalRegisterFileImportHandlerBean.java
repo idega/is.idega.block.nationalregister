@@ -663,12 +663,26 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	}
 
 	private void addNewRelations(FamilyLogicBean memFamLog, User user, Relations rel) throws RemoveException, RemoteException, CreateException {
+		try {
+			if (user.isDeceased()) {
+				getLogger().info("Removing all family relation for " + user + ", personal ID: " + user.getPersonalID());
+				memFamLog.removeAllFamilyRelationsForUser(user, performer);
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error removing all family relations for " + user + ", personal ID: " + user.getPersonalID());
+		}
+
 		// NationalRegisterBusiness natRegBus;
 		// remove spouse
 		// System.out.println("ADDING");
 		// rel.dumpInfo();
-		if (null != rel.getSpouse()) {
-			memFamLog.setAsSpouseFor(user, rel.getSpouse());
+		User spouse = rel.getSpouse();
+		if (spouse != null) {
+			if (isAllowedToAddToFamily(spouse)) {
+				memFamLog.setAsSpouseFor(user, spouse);
+			} else {
+				memFamLog.removeAsSpouseFor(user, spouse);
+			}
 		}
 		// Remove from collections
 		Iterator<User> iter = rel.getChildren().iterator();
@@ -676,6 +690,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			User child = iter.next();
 			if (isAllowedToAddToFamily(child)) {
 				memFamLog.setAsChildFor(child, user);
+			} else {
+				memFamLog.removeAsChildFor(child, user);
 			}
 		}
 		iter = rel.getIsCustodianFor().iterator();
@@ -683,6 +699,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			User child = iter.next();
 			if (isAllowedToAddToFamily(child)) {
 				memFamLog.setAsCustodianFor(user, child);
+			} else {
+				memFamLog.removeAsCustodianFor(user, child);
 			}
 		}
 		iter = rel.getHasCustodians().iterator();
@@ -690,6 +708,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			User custodian = iter.next();
 			if (isAllowedToAddToFamily(user)) {
 				memFamLog.setAsCustodianFor(custodian, user);
+			} else {
+				memFamLog.removeAsCustodianFor(custodian, user);
 			}
 		}
 		iter = rel.getParents().iterator();
@@ -697,6 +717,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			User parent = iter.next();
 			if (isAllowedToAddToFamily(user)) {
 				memFamLog.setAsParentFor(parent, user);
+			} else {
+				memFamLog.removeAsParentFor(parent, user);
 			}
 		}
 		iter = rel.getSiblings().iterator();
@@ -704,6 +726,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			User sibling = iter.next();
 			if (isAllowedToAddToFamily(user)) {
 				memFamLog.setAsSiblingFor(user, sibling);
+			} else {
+				memFamLog.removeAsSiblingFor(user, sibling);
 			}
 		}
 	}
