@@ -159,7 +159,9 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			reg.setNewSsnOrName(newSsnOrName);
 			reg.setDateOfBirth(dateOfBirth);
 
-			reg.store();
+			try {
+				reg.store();
+			} catch (Exception e) {}
 
 			IWTimestamp t = new IWTimestamp();
 
