@@ -26,6 +26,7 @@ import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
@@ -125,9 +126,20 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		try {
 			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
 			NationalRegister reg = getEntryBySSN(ssn);
+
+			Integer id = null;
 			if (reg == null) {
 				reg = getNationalRegisterHome().create();
+
+				IWMainApplicationSettings settings = getIWMainApplication().getSettings();
+				id = settings.getInt("nat_reg.generate_id_for_entity", -1);
+				if (id != null && id > 0) {
+					id++;
+					reg.setId(id);
+					settings.setProperty("nat_reg.generate_id_for_entity", String.valueOf(id));
+				}
 			}
+
 			reg.setAddress(address);
 			reg.setBuilding(building);
 			reg.setCommune(commune);

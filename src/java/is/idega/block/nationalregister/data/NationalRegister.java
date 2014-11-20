@@ -9,6 +9,10 @@ import com.idega.data.IDOEntity;
  */
 public interface NationalRegister extends IDOEntity {
 
+	public void setId(Integer id);
+
+	public Integer getId();
+
 	/**
 	 * @see is.idega.block.nationalregister.data.NationalRegisterBMPBean#setSymbol
 	 */

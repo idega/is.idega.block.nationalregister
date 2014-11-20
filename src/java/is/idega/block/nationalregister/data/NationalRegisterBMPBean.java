@@ -10,7 +10,7 @@ import com.idega.data.GenericEntity;
 /**
  * A data class to hold the national register data, for Iceland, which is read
  * in from the E128 and E36 file from SKYRR.
- * 
+ *
  * @author palli
  */
 public class NationalRegisterBMPBean extends GenericEntity implements NationalRegister {
@@ -36,7 +36,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 	protected static final String PARISH = "parish";
 	protected static final String PO = "po";
 	protected static final String ADDRESS = "address";
-	
+
 	protected static final String ADDRESS_CODE = "address_dode";
 	protected static final String DATE_OF_MODIFICATION = "date_of_modification";
 	protected static final String PLACEMENT_CODE = "placement_code";
@@ -51,6 +51,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 	/**
 	 * @see com.idega.data.IDOEntity#getEntityName()
 	 */
+	@Override
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}
@@ -58,6 +59,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 	/**
 	 * @see com.idega.data.IDOEntity#initializeAttributes()
 	 */
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 
@@ -81,7 +83,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 		addAttribute(PARISH, "Sokn", true, true, java.lang.String.class, 3);
 		addAttribute(PO, "Postnumer", true, true, java.lang.String.class, 3);
 		addAttribute(ADDRESS, "Heimili", true, true, java.lang.String.class, 21);
-		
+
 		addAttribute(ADDRESS_CODE, "Logheimiliskodi", true, true, java.lang.String.class, 12);
 		addAttribute(DATE_OF_MODIFICATION, "Dagsetning breytinga", true, true, String.class, 6);
 		addAttribute(PLACEMENT_CODE, "Adseturskodi", true, true, String.class, 12);
@@ -93,247 +95,315 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 		addAttribute(DATE_OF_DELETION, "Dagsetning brottfellinguar", true, true, String.class, 6);
 		addAttribute(NEW_SSN_OR_NAME, "Kennitala/Nafn ef breyting", true, true, String.class, 18);
 		addAttribute(DATE_OF_BIRTH, "Faedingardagur", true, true, String.class, 6);
-		
+
 		addIndex(SSN);
 		setUnique(SSN, true);
 	}
 
+	public void setId(Integer id) {
+		setColumn(getIDColumnName(), id);
+	}
+
+	public Integer getId() {
+		return getIntColumnValue(getIDColumnName());
+	}
+
+	@Override
 	public void setSymbol(String symbol) {
 		setColumn(SYMBOL, symbol);
 	}
 
+	@Override
 	public String getSymbol() {
 		return getStringColumnValue(SYMBOL);
 	}
 
+	@Override
 	public void setOldId(String id) {
 		setColumn(OLD_ID, id);
 	}
 
+	@Override
 	public String getOldId() {
 		return getStringColumnValue(OLD_ID);
 	}
 
+	@Override
 	public void setSSN(String ssn) {
 		setColumn(SSN, ssn);
 	}
 
+	@Override
 	public String getSSN() {
 		return getStringColumnValue(SSN);
 	}
 
+	@Override
 	public void setFamilyId(String id) {
 		setColumn(FAMILY_ID, id);
 	}
 
+	@Override
 	public String getFamilyId() {
 		return getStringColumnValue(FAMILY_ID);
 	}
 
+	@Override
 	public void setName(String name) {
 		setColumn(NAME, name);
 	}
 
+	@Override
 	public String getName() {
 		return getStringColumnValue(NAME);
 	}
 
+	@Override
 	public void setCommune(String commune) {
 		setColumn(COMMUNE, commune);
 	}
 
+	@Override
 	public String getCommune() {
 		return getStringColumnValue(COMMUNE);
 	}
 
+	@Override
 	public void setStreet(String street) {
 		setColumn(STREET, street);
 	}
 
+	@Override
 	public String getStreet() {
 		return getStringColumnValue(STREET);
 	}
 
+	@Override
 	public void setBuilding(String building) {
 		setColumn(BUILDING, building);
 	}
 
+	@Override
 	public String getBuilding() {
 		return getStringColumnValue(BUILDING);
 	}
 
+	@Override
 	public void setFloor(String floor) {
 		setColumn(FLOOR, floor);
 	}
 
+	@Override
 	public String getFloor() {
 		return getStringColumnValue(FLOOR);
 	}
 
+	@Override
 	public void setSex(String sex) {
 		setColumn(SEX, sex);
 	}
 
+	@Override
 	public String getSex() {
 		return getStringColumnValue(SEX);
 	}
 
+	@Override
 	public void setMaritalStatus(String status) {
 		setColumn(MARITAL_STATUS, status);
 	}
 
+	@Override
 	public String getMaritalStatus() {
 		return getStringColumnValue(MARITAL_STATUS);
 	}
 
+	@Override
 	public void setProhibitMarking(String marking) {
 		setColumn(PROHIBIT_MARKING, marking);
 	}
 
+	@Override
 	public String getProhibitMarking() {
 		return getStringColumnValue(PROHIBIT_MARKING);
 	}
 
+	@Override
 	public void setNationality(String nationality) {
 		setColumn(NATIONALITY, nationality);
 	}
 
+	@Override
 	public String getNationality() {
 		return getStringColumnValue(NATIONALITY);
 	}
 
+	@Override
 	public void setPlaceOfBirth(String pob) {
 		setColumn(PLACE_OF_BIRTH, pob);
 	}
 
+	@Override
 	public String getPlaceOfBirth() {
 		return getStringColumnValue(PLACE_OF_BIRTH);
 	}
 
+	@Override
 	public void setSpouseSSN(String ssn) {
 		setColumn(SPOUSE_SSN, ssn);
 	}
 
+	@Override
 	public String getSpouseSSN() {
 		return getStringColumnValue(SPOUSE_SSN);
 	}
 
+	@Override
 	public void setFate(String fate) {
 		setColumn(FATE, fate);
 	}
 
+	@Override
 	public String getFate() {
 		return getStringColumnValue(FATE);
 	}
 
+	@Override
 	public void setParish(String parish) {
 		setColumn(PARISH, parish);
 	}
 
+	@Override
 	public String getParish() {
 		return getStringColumnValue(PARISH);
 	}
 
+	@Override
 	public void setPO(String po) {
 		setColumn(PO, po);
 	}
 
+	@Override
 	public String getPO() {
 		return getStringColumnValue(PO);
 	}
 
+	@Override
 	public void setAddress(String address) {
 		setColumn(ADDRESS, address);
 	}
 
+	@Override
 	public String getAddress() {
 		return getStringColumnValue(ADDRESS);
 	}
 
+	@Override
 	public void setAddressCode(String code) {
 		setColumn(ADDRESS_CODE, code);
 	}
-	
+
+	@Override
 	public String getAddressCode() {
 		return getStringColumnValue(ADDRESS_CODE);
 	}
-	
+
+	@Override
 	public void setDateOfModification(String date) {
 		setColumn(DATE_OF_MODIFICATION, date);
 	}
-	
+
+	@Override
 	public String getDateOfModification() {
 		return getStringColumnValue(DATE_OF_MODIFICATION);
 	}
-	
+
+	@Override
 	public void setPlacementCode(String code) {
 		setColumn(PLACEMENT_CODE, code);
 	}
-	
+
+	@Override
 	public String getPlacementCode() {
 		return getStringColumnValue(PLACEMENT_CODE);
 	}
-	
+
+	@Override
 	public void setDateOfCreation(String date) {
 		setColumn(DATE_OF_CREATION, date);
 	}
-	
+
+	@Override
 	public String getDateOfCreation() {
 		return getStringColumnValue(DATE_OF_CREATION);
 	}
-	
+
+	@Override
 	public void setLastDomesticAddress(String address) {
 		setColumn(LAST_DOMESTIC_ADDRESS, address);
 	}
-	
+
+	@Override
 	public String getLastDomesticAddress() {
 		return getStringColumnValue(LAST_DOMESTIC_ADDRESS);
 	}
-	
+
+	@Override
 	public void setAgentSSN(String ssn) {
 		setColumn(AGENT_SSN, ssn);
 	}
-	
+
+	@Override
 	public String getAgentSSN() {
 		return getStringColumnValue(AGENT_SSN);
 	}
-	
+
+	@Override
 	public void setIsNew(String isNew) {
 		setColumn(IS_NEW, isNew);
 	}
-	
+
+	@Override
 	public String getIsNew() {
 		return getStringColumnValue(IS_NEW);
 	}
-	
+
+	@Override
 	public void setAddressName(String addressName) {
 		setColumn(ADDRESS_NAME, addressName);
 	}
-	
+
+	@Override
 	public String getAddressName() {
 		return getStringColumnValue(ADDRESS_NAME);
 	}
 
+	@Override
 	public void setDateOfDeletion(String date) {
 		setColumn(DATE_OF_DELETION, date);
 	}
-	
+
+	@Override
 	public String getDateOfDeletion() {
 		return getStringColumnValue(DATE_OF_DELETION);
 	}
-	
+
+	@Override
 	public void setNewSsnOrName(String ssnOrName) {
 		setColumn(NEW_SSN_OR_NAME, ssnOrName);
 	}
-	
+
+	@Override
 	public String getNewSsnOrName() {
 		return getStringColumnValue(NEW_SSN_OR_NAME);
 	}
-	
+
+	@Override
 	public void setDateOfBirth(String date) {
 		setColumn(DATE_OF_BIRTH, date);
 	}
-	
+
+	@Override
 	public String getDateOfBirth() {
 		return getStringColumnValue(DATE_OF_BIRTH);
 	}
@@ -350,7 +420,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 		query.append(" = '");
 		query.append(ssn);
 		query.append("'");
-		
+
 		return idoFindPKsBySQL(query.toString());
 	}
 }
