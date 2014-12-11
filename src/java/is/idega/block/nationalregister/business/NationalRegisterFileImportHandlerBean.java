@@ -273,11 +273,11 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			logger.info("NatRegImport processing RECORD [0] time: " + IWTimestamp.getTimestampRightNow().toString());
 			while (!(item = (String) this.file.getNextRecord()).equals("")) {
 				count++;
-				try{
+				try {
 					if (!processRecord(item)) {
 						this.failedRecordList.add(item);
 					}
-				}catch (Exception e) {
+				} catch (Exception e) {
 					logger.log(Level.WARNING, "Failed importing record :" + item, e);
 				}
 				if ((count % intervalBetweenOutput) == 0) {
@@ -732,9 +732,16 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		}
 	}
 
+	protected void doUpdateExternalContext(Map<Integer, String> data) {
+	}
+
 	private boolean processRecord(String record) throws RemoteException, CreateException {
 		this.valueList = this.file.getValuesFromRecordString(record);
-		boolean success = storeNationRegisterEntry();
+		Map<Integer, String> data = storeNationRegisterEntry();
+		boolean success = data != null;
+		if (success) {
+			doUpdateExternalContext(data);
+		}
 		//boolean success = updateNationRegisterEntry();
 		this.valueList = null;
 		return success;
@@ -761,45 +768,46 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		return this.natBiz.updateEntryAddress(ssn, addressName);
 	}
 
+	private Map<Integer, String> storeNationRegisterEntry() throws RemoteException, CreateException {
+		Map<Integer, String> data = new HashMap<Integer, String>();
 
-	protected boolean storeNationRegisterEntry() throws RemoteException, CreateException {
 		// variables
-		String symbol = getProperty(COLUMN_SYMBOL);
-		String oldId = getProperty(COLUMN_OLD_ID);
-		String ssn = getProperty(COLUMN_SSN);
-		String familyId = getProperty(COLUMN_FAMILY_ID);
-		String name = getProperty(COLUMN_NAME);
-		String commune = getProperty(COLUMN_COMMUNE);
-		String street = getProperty(COLUMN_STREET);
-		String building = getProperty(COLUMN_BUILDING);
-		String floor = getProperty(COLUMN_FLOOR);
-		String sex = getProperty(COLUMN_SEX);
-		String maritialStatus = getProperty(COLUMN_MARITIAL_STATUS);
-		String empty = getProperty(COLUMN_EMPTY);
-		String prohibitMarking = getProperty(COLUMN_NO_MAIL);
-		String nationality = getProperty(COLUMN_NATIONALITY);
-		String placeOfBirth = getProperty(COLUMN_PLACE_OF_BIRTH);
-		String spouseSSN = getProperty(COLUMN_SPOUSE_SSN);
-		String fate = getProperty(COLUMN_STATUS);
-		String parish = getProperty(COLUMN_PARISH);
-		String po = getProperty(COLUMN_PO);
-		String address = getProperty(COLUMN_ADDRESS);
-		String addressCode = getProperty(COLUMN_ADDRESS_CODE);
-		String dateOfModification = getProperty(COLUMN_DATE_OF_MODIFICATION);
-		String placementCode = getProperty(COLUMN_PLACEMENT_CODE);
-		String dateOfCreation = getProperty(COLUMN_DATE_OF_CREATION);
-		String lastDomesticAddress = getProperty(COLUMN_LAST_DOMESTIC_ADDRESS);
-		String agentSsn = getProperty(COLUMN_AGENT_SSN);
-		String sNew = getProperty(COLUMN_NEW);
-		String addressName = getProperty(COLUMN_ADDRESS_NAME);
-		String dateOfDeletion = getProperty(COLUMN_DATE_OF_DELETION);
-		String newSsnOrName = getProperty(COLUMN_NEW_SSN_OR_NAME);
-		String dateOfBirth = getProperty(COLUMN_DATE_OF_BIRTH);
+		String symbol = getProperty(COLUMN_SYMBOL, data);
+		String oldId = getProperty(COLUMN_OLD_ID, data);
+		String ssn = getProperty(COLUMN_SSN, data);
+		String familyId = getProperty(COLUMN_FAMILY_ID, data);
+		String name = getProperty(COLUMN_NAME, data);
+		String commune = getProperty(COLUMN_COMMUNE, data);
+		String street = getProperty(COLUMN_STREET, data);
+		String building = getProperty(COLUMN_BUILDING, data);
+		String floor = getProperty(COLUMN_FLOOR, data);
+		String sex = getProperty(COLUMN_SEX, data);
+		String maritialStatus = getProperty(COLUMN_MARITIAL_STATUS, data);
+		String empty = getProperty(COLUMN_EMPTY, data);
+		String prohibitMarking = getProperty(COLUMN_NO_MAIL, data);
+		String nationality = getProperty(COLUMN_NATIONALITY, data);
+		String placeOfBirth = getProperty(COLUMN_PLACE_OF_BIRTH, data);
+		String spouseSSN = getProperty(COLUMN_SPOUSE_SSN, data);
+		String fate = getProperty(COLUMN_STATUS, data);
+		String parish = getProperty(COLUMN_PARISH, data);
+		String po = getProperty(COLUMN_PO, data);
+		String address = getProperty(COLUMN_ADDRESS, data);
+		String addressCode = getProperty(COLUMN_ADDRESS_CODE, data);
+		String dateOfModification = getProperty(COLUMN_DATE_OF_MODIFICATION, data);
+		String placementCode = getProperty(COLUMN_PLACEMENT_CODE, data);
+		String dateOfCreation = getProperty(COLUMN_DATE_OF_CREATION, data);
+		String lastDomesticAddress = getProperty(COLUMN_LAST_DOMESTIC_ADDRESS, data);
+		String agentSsn = getProperty(COLUMN_AGENT_SSN, data);
+		String sNew = getProperty(COLUMN_NEW, data);
+		String addressName = getProperty(COLUMN_ADDRESS_NAME, data);
+		String dateOfDeletion = getProperty(COLUMN_DATE_OF_DELETION, data);
+		String newSsnOrName = getProperty(COLUMN_NEW_SSN_OR_NAME, data);
+		String dateOfBirth = getProperty(COLUMN_DATE_OF_BIRTH, data);
+
 		Group group;
-		// System.out.println("ssn = " + ssn);
 		boolean success = true;
 		if (ssn == null || ssn.equals("")) {
-			return false;
+			return null;
 		}
 		group = getGroupForPostalCode(po);
 		if (!this.relationsOnly) {
@@ -815,7 +823,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				}
 				catch (FinderException e) {
 					e.printStackTrace();
-					return false;
+					return null;
 				}
 				//user.setDeleted(true);
 				//user.setDeletedBy(((Integer) performer.getPrimaryKey()).intValue());
@@ -864,7 +872,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				catch (FinderException e1) {
 					e1.printStackTrace();
 				}
-				return true;
+				return success ? data : null;
 			}
 			if (FATE_REMOVED.equalsIgnoreCase(fate)) {
 				try {
@@ -873,9 +881,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				}
 				catch (Exception e) {
 					e.printStackTrace();
-					return false;
+					return null;
 				}
-				return true;
+				return success ? data : null;
 			}
 			/*
 			 * if(FATE_CHANGE_OLD_ID.equalsIgnoreCase(fate)){
@@ -887,10 +895,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					if (this.postalCodeFix) {
 						this.natBiz.updateUserAddress(this.uBiz.getUser(ssn), this.uBiz, address, po, null, null, null, null);
 					}
-					return true;
+					return success ? data : null;
 				}
 				catch (Exception e) {
-					return false;
+					return null;
 				}
 			}
 		}
@@ -905,7 +913,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				}
 				catch (FinderException e) {
 					e.printStackTrace();
-					return false;
+					return null;
 				}
 			}
 		}
@@ -922,7 +930,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		catch (FinderException e) {
 			// FinderExxception is ignored, since not all users have a family
 		}
-		return success;
+		return success ? data : null;
 	}
 
 	/**
@@ -964,23 +972,27 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		return group;
 	}
 
-	protected String getProperty(int columnIndex) {
+	private String getProperty(int columnIndex) {
+		return getProperty(columnIndex, null);
+	}
+
+	private String getProperty(int columnIndex, Map<Integer, String> data) {
 		String value = null;
 		if (this.valueList != null) {
 			try {
 				value = this.valueList.get(columnIndex);
-			}
-			catch (RuntimeException e) {
+			} catch (RuntimeException e) {
 				return null;
 			}
 			if (this.file.getEmptyValueString().equals(value)) {
 				return null;
-			}
-			else {
+			} else {
+				if (data != null) {
+					data.put(columnIndex, value);
+				}
 				return value;
 			}
-		}
-		else {
+		} else {
 			return null;
 		}
 	}

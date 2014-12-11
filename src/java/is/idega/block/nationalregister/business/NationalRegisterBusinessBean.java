@@ -18,6 +18,8 @@ import javax.ejb.RemoveException;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOServiceBean;
+import com.idega.core.idgenerator.business.IdGenerator;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Commune;
 import com.idega.core.location.data.CommuneHome;
@@ -36,6 +38,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 
 public class NationalRegisterBusinessBean extends IBOServiceBean implements NationalRegisterBusiness, UserGroupPlugInBusiness {
 
@@ -118,11 +121,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		String dateOfDeletion,
 		String newSsnOrName,
 		String dateOfBirth	,
-		Group citizenGroup) {
-
-
-
-
+		Group citizenGroup
+	) {
 		try {
 			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
 			NationalRegister reg = getEntryBySSN(ssn);
@@ -204,7 +204,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			Gender gender = getGender(sex);
 
 			User user = userBiz.createUserByPersonalIDIfDoesNotExist(name,ssn,gender,t);
-			//user.setDisplayName(name);
 
 			if (newSsnOrName != null && "".equalsIgnoreCase(newSsnOrName)) {
 				try {
@@ -238,6 +237,11 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				citizenGroup.addGroup(user);
 				user.setPrimaryGroup(citizenGroup);
 				user.store();
+			}
+
+			if (StringUtil.isEmpty(user.getUniqueId())) {
+				IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
+				user.setUniqueId(uidGenerator.generateId());
 			}
 
 			user.setLastReadFromImport(IWTimestamp.getTimestampRightNow());
