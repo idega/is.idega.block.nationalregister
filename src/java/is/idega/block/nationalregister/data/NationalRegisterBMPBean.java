@@ -14,6 +14,9 @@ import com.idega.data.GenericEntity;
  * @author palli
  */
 public class NationalRegisterBMPBean extends GenericEntity implements NationalRegister {
+
+	private static final long serialVersionUID = 2457200702680774311L;
+
 	protected static final String ENTITY_NAME = "reg_national_is";
 
 	protected static final String SYMBOL = "symbol";
@@ -48,6 +51,7 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 	protected static final String DATE_OF_DELETION = "date_of_deletion";
 	protected static final String NEW_SSN_OR_NAME = "new_ssn";
 	protected static final String DATE_OF_BIRTH = "date_of_birth";
+
 	/**
 	 * @see com.idega.data.IDOEntity#getEntityName()
 	 */
@@ -100,10 +104,12 @@ public class NationalRegisterBMPBean extends GenericEntity implements NationalRe
 		setUnique(SSN, true);
 	}
 
+	@Override
 	public void setId(Integer id) {
 		setColumn(getIDColumnName(), id);
 	}
 
+	@Override
 	public Integer getId() {
 		return getIntColumnValue(getIDColumnName());
 	}

@@ -10,7 +10,6 @@
 package is.idega.block.nationalregister.business;
 
 import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.nationalregister.data.NationalRegister;
 import is.idega.block.nationalregister.data.NationalRegisterFate;
 import is.idega.block.nationalregister.data.NationalRegisterFateHome;
 
@@ -317,8 +316,7 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 		return success;
 	}
 
-	protected boolean storeDeceasedNationRegisterEntry() throws RemoteException,
-	CreateException {
+	protected boolean storeDeceasedNationRegisterEntry() throws RemoteException, CreateException {
 		// variables
 		String symbol = getProperty(COLUMN_SYMBOL);
 		String ssn = getProperty(COLUMN_SSN);
@@ -360,10 +358,10 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 		}
 		if (user != null) {
 			try {
-				NationalRegister natRegEntry = this.natRegBiz.getEntryBySSN(ssn);
+				is.idega.block.nationalregister.data.bean.NationalRegister natRegEntry = this.natRegBiz.getEntryBySSN(ssn);
 				if (natRegEntry != null && this.fate != null) {
-					natRegEntry.setFate(this.fate.getFateString());
-					natRegEntry.store();
+					natRegEntry.setStatus(fate.getFateString());
+					natRegBiz.getNationalRegisterDAO().update(natRegEntry);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

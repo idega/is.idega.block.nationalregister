@@ -1,29 +1,35 @@
 package is.idega.block.nationalregister.business;
 
 
-import javax.ejb.CreateException;
 import is.idega.block.family.business.FamilyLogic;
-import com.idega.user.data.User;
-import is.idega.block.nationalregister.data.NationalRegister;
-import com.idega.user.business.UserGroupPlugInBusiness;
+import is.idega.block.nationalregister.data.bean.NationalRegister;
+import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
+
 import java.rmi.RemoteException;
-import com.idega.user.data.Group;
-import com.idega.core.location.data.PostalCode;
 import java.util.Collection;
-import com.idega.business.IBOService;
-import com.idega.user.business.UserBusiness;
 import java.util.List;
-import com.idega.business.IBOLookupException;
-import com.idega.presentation.PresentationObject;
-import com.idega.core.location.data.Country;
+
+import javax.ejb.CreateException;
 import javax.ejb.RemoveException;
 
-public interface NationalRegisterBusiness extends IBOService,
-		UserGroupPlugInBusiness {
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBOService;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.PostalCode;
+import com.idega.presentation.PresentationObject;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGroupPlugInBusiness;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
+
+public interface NationalRegisterBusiness extends IBOService, UserGroupPlugInBusiness {
+
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#getEntryBySSN
 	 */
 	public NationalRegister getEntryBySSN(String ssn) throws RemoteException;
+
+	public NationalRegisterDAO getNationalRegisterDAO();
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#updateEntryAddress
@@ -75,66 +81,77 @@ public interface NationalRegisterBusiness extends IBOService,
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#beforeUserRemove
 	 */
+	@Override
 	public void beforeUserRemove(User user, Group parentGroup)
 			throws RemoveException, RemoteException, RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#afterUserCreateOrUpdate
 	 */
+	@Override
 	public void afterUserCreateOrUpdate(User user, Group parentGroup)
 			throws CreateException, RemoteException, RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#beforeGroupRemove
 	 */
+	@Override
 	public void beforeGroupRemove(Group group, Group parentGroup)
 			throws RemoveException, RemoteException, RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#afterGroupCreateOrUpdate
 	 */
+	@Override
 	public void afterGroupCreateOrUpdate(Group group, Group parentGroup)
 			throws CreateException, RemoteException, RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#instanciateEditor
 	 */
+	@Override
 	public PresentationObject instanciateEditor(Group group)
 			throws RemoteException, RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#instanciateViewer
 	 */
+	@Override
 	public PresentationObject instanciateViewer(Group group)
 			throws RemoteException, RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#getUserPropertiesTabs
 	 */
+	@Override
 	public List getUserPropertiesTabs(User user) throws RemoteException,
 			RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#getGroupPropertiesTabs
 	 */
+	@Override
 	public List getGroupPropertiesTabs(Group group) throws RemoteException,
 			RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#getMainToolbarElements
 	 */
+	@Override
 	public List getMainToolbarElements() throws RemoteException,
 			RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#getGroupToolbarElements
 	 */
+	@Override
 	public List getGroupToolbarElements(Group group) throws RemoteException,
 			RemoteException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#isUserAssignableFromGroupToGroup
 	 */
+	@Override
 	public String isUserAssignableFromGroupToGroup(User user,
 			Group sourceGroup, Group targetGroup) throws RemoteException,
 			RemoteException;
@@ -142,6 +159,7 @@ public interface NationalRegisterBusiness extends IBOService,
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#isUserSuitedForGroup
 	 */
+	@Override
 	public String isUserSuitedForGroup(User user, Group targetGroup)
 			throws RemoteException, RemoteException;
 
@@ -172,6 +190,7 @@ public interface NationalRegisterBusiness extends IBOService,
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#canCreateSubGroup
 	 */
+	@Override
 	public String canCreateSubGroup(Group group, String groupTypeOfSubGroup)
 			throws RemoteException, RemoteException;
 

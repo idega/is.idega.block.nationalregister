@@ -1,19 +1,21 @@
 package is.idega.block.nationalregister.business;
 
 import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.nationalregister.data.NationalRegister;
-import is.idega.block.nationalregister.data.NationalRegisterHome;
+import is.idega.block.nationalregister.data.bean.NationalRegister;
+import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -27,7 +29,6 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
-import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.UserBusiness;
@@ -39,6 +40,7 @@ import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 public class NationalRegisterBusinessBean extends IBOServiceBean implements NationalRegisterBusiness, UserGroupPlugInBusiness {
 
@@ -55,22 +57,10 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	@Override
 	public NationalRegister getEntryBySSN(String ssn) {
 		try {
-			Collection<NationalRegister> c = getNationalRegisterHome().findAllBySSN(ssn);
-
-			if (c != null) {
-				Iterator<NationalRegister> it = c.iterator();
-				if (it.hasNext()) {
-					return it.next();
-				}
-			}
+			return getNationalRegisterDAO().findBySSN(ssn);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting entry of nat. reg. by SSN: " + ssn, e);
 		}
-		catch (RemoteException e) {
-			e.printStackTrace(System.err);
-		}
-		catch (FinderException e) {
-			e.printStackTrace(System.err);
-		}
-
 		return null;
 	}
 
@@ -79,13 +69,111 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		NationalRegister reg = getEntryBySSN(ssn);
 		if (reg != null) {
 			reg.setAddressName(addressName);
-			reg.store();
+			getNationalRegisterDAO().update(reg);
 			return true;
 		}
 
 		return false;
 	}
 
+	@Autowired
+	private NationalRegisterDAO nationalRegisterDAO;
+
+	@Override
+	public NationalRegisterDAO getNationalRegisterDAO() {
+		if (nationalRegisterDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return nationalRegisterDAO;
+	}
+
+	private void doUpdateNatRegEntry(
+		final String symbol,
+		final String oldId,
+		final String ssn,
+		final String familyId,
+		final String name,
+		final String commune,
+		final String street,
+		final String building,
+		final String floor,
+		final String sex,
+		final String maritialStatus,
+		final String empty,
+		final String prohibitMarking,
+		final String nationality,
+		final String placeOfBirth,
+		final String spouseSSN,
+		final String fate,
+		final String parish,
+		final String po,
+		final String address,
+		final String addressCode,
+		final String dateOfModification,
+		final String placementCode,
+		final String dateOfCreation,
+		final String lastDomesticAddress,
+		final String agentSsn,
+		final String sNew,
+		final String addressName,
+		final String dateOfDeletion,
+		final String newSsnOrName,
+		final String dateOfBirth
+	) {
+		IWMainApplicationSettings settings = getIWMainApplication().getSettings();
+		if (settings.getBoolean("nat_reg.create_nat_reg_entry", Boolean.TRUE)) {
+			NationalRegister reg = getEntryBySSN(ssn);
+
+			Integer id = null;
+			if (reg == null) {
+				reg = new NationalRegister();
+
+				id = settings.getInt("nat_reg.generate_id_for_entity", -1);
+				if (id != null && id > 0) {
+					id++;
+					reg.setId(id);
+					settings.setProperty("nat_reg.generate_id_for_entity", String.valueOf(id));
+				}
+			}
+
+			reg.setAddress(address);
+			reg.setBuilding(building);
+			reg.setCommune(commune);
+			reg.setFamilyId(familyId);
+			reg.setStatus(fate);
+			reg.setFloor(floor);
+			reg.setMaritalStatus(maritialStatus);
+			reg.setName(name);
+			reg.setNationality(nationality);
+			reg.setOldId(oldId);
+			reg.setParish(parish);
+			reg.setBirthPlace(placeOfBirth);
+			reg.setPo(po);
+			reg.setProhibit(prohibitMarking);
+			reg.setSex(sex);
+			reg.setSpouseSSN(spouseSSN);
+			reg.setSsn(ssn);
+			reg.setStreet(street);
+			reg.setSymbol(symbol);
+			reg.setAddressCode(addressCode);
+			reg.setDateOfModification(dateOfModification);
+			reg.setPlacementCode(placementCode);
+			reg.setDateOfCreation(dateOfCreation);
+			reg.setLastDomesticAddress(lastDomesticAddress);
+			reg.setAgentSSN(agentSsn);
+			reg.setIsNew(sNew);
+			reg.setAddressName(addressName);
+			reg.setDateOfDeletion(dateOfDeletion);
+			reg.setNewSSN(newSsnOrName);
+			reg.setDateOfBirth(dateOfBirth);
+
+			try {
+				getNationalRegisterDAO().update(reg);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Error updating/creating nat. reg. entry with SSN: " + ssn, e);
+			}
+		}
+	}
 
 	@Override
 	public boolean updateEntry(
@@ -120,60 +208,13 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		String addressName,
 		String dateOfDeletion,
 		String newSsnOrName,
-		String dateOfBirth	,
+		String dateOfBirth,
 		Group citizenGroup
 	) {
 		try {
 			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
-			NationalRegister reg = getEntryBySSN(ssn);
 
-			Integer id = null;
-			if (reg == null) {
-				reg = getNationalRegisterHome().create();
-
-				IWMainApplicationSettings settings = getIWMainApplication().getSettings();
-				id = settings.getInt("nat_reg.generate_id_for_entity", -1);
-				if (id != null && id > 0) {
-					id++;
-					reg.setId(id);
-					settings.setProperty("nat_reg.generate_id_for_entity", String.valueOf(id));
-				}
-			}
-
-			reg.setAddress(address);
-			reg.setBuilding(building);
-			reg.setCommune(commune);
-			reg.setFamilyId(familyId);
-			reg.setFate(fate);
-			reg.setFloor(floor);
-			reg.setMaritalStatus(maritialStatus);
-			reg.setName(name);
-			reg.setNationality(nationality);
-			reg.setOldId(oldId);
-			reg.setParish(parish);
-			reg.setPlaceOfBirth(placeOfBirth);
-			reg.setPO(po);
-			reg.setProhibitMarking(prohibitMarking);
-			reg.setSex(sex);
-			reg.setSpouseSSN(spouseSSN);
-			reg.setSSN(ssn);
-			reg.setStreet(street);
-			reg.setSymbol(symbol);
-			reg.setAddressCode(addressCode);
-			reg.setDateOfModification(dateOfModification);
-			reg.setPlacementCode(placementCode);
-			reg.setDateOfCreation(dateOfCreation);
-			reg.setLastDomesticAddress(lastDomesticAddress);
-			reg.setAgentSSN(agentSsn);
-			reg.setIsNew(sNew);
-			reg.setAddressName(addressName);
-			reg.setDateOfDeletion(dateOfDeletion);
-			reg.setNewSsnOrName(newSsnOrName);
-			reg.setDateOfBirth(dateOfBirth);
-
-			try {
-				reg.store();
-			} catch (Exception e) {}
+			doUpdateNatRegEntry(symbol, oldId, ssn, familyId, name, commune, street, building, floor, sex, maritialStatus, empty, prohibitMarking, nationality, placeOfBirth, spouseSSN, fate, parish, po, address, addressCode, dateOfModification, placementCode, dateOfCreation, lastDomesticAddress, agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth);
 
 			IWTimestamp t = new IWTimestamp();
 
@@ -203,7 +244,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 			Gender gender = getGender(sex);
 
-			User user = userBiz.createUserByPersonalIDIfDoesNotExist(name,ssn,gender,t);
+			User user = userBiz.createUserByPersonalIDIfDoesNotExist(name, ssn, gender, t);
 
 			if (newSsnOrName != null && "".equalsIgnoreCase(newSsnOrName)) {
 				try {
@@ -218,14 +259,12 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				}
 			}
 
-
 			Country country = null;
 			Integer communeID = null;
 			String city = null;
 			if (commune.substring(0,2).equals("99")) {
 				country = getCountryByISOAbbreviation(commune.substring(2,4));
-			}
-			else {
+			} else {
 				country = getCountryByISOAbbreviation("IS");
 				communeID = getCommuneIDFromCommuneCode(commune);
 				city = getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString()));
@@ -249,19 +288,13 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 			FamilyLogic familyLogic = getFamilyLogic();
 			familyLogic.updateFamilyForUser(familyId, user);
-
-//			userBiz.updateUsersMainAddressOrCreateIfDoesNotExist((Integer) user.getPrimaryKey(), address, postalCodeId, null, null, null, null, null);
-//			userBiz.updateUsersCoAddressOrCreateIfDoesNotExist((Integer) user.getPrimaryKey(), address, postalCodeId, null, null, null, null, null);
-		}
-		catch (CreateException e) {
+		} catch (CreateException e) {
 			e.printStackTrace();
 			return false;
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			e.printStackTrace();
 			return false;
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -274,8 +307,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		NationalRegister reg = getEntryBySSN(oldPersonalID);
 
 		if (reg != null) {
-			reg.setSSN(newPersonalID);
-			reg.store();
+			reg.setSsn(newPersonalID);
+			getNationalRegisterDAO().update(reg);
 		}
 	}
 
@@ -285,7 +318,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 		if (reg != null) {
 			reg.setOldId(oldID);
-			reg.store();
+			getNationalRegisterDAO().update(reg);
 		}
 	}
 
@@ -354,18 +387,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			System.out.println("NationalRegisterBusinessBean : setting icelandCountryPK ("+icelandCountryPK+")");
 		}
 		return icelandCountryPK;
-	}
-
-	protected NationalRegisterHome getNationalRegisterHome() {
-		NationalRegisterHome home = null;
-		try {
-			home = (NationalRegisterHome) IDOLookup.getHome(NationalRegister.class);
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-
-		return home;
 	}
 
 	/* (non-Javadoc)

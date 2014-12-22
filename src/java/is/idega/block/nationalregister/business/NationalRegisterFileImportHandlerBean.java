@@ -4,7 +4,6 @@ import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.FamilyLogicBean;
 import is.idega.block.family.data.FamilyMember;
 import is.idega.block.family.data.FamilyMemberHome;
-import is.idega.block.nationalregister.data.NationalRegister;
 import is.idega.block.nationalregister.data.NationalRegisterFate;
 import is.idega.block.nationalregister.data.NationalRegisterFateHome;
 
@@ -48,6 +47,7 @@ import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.LocaleUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.Timer;
 
 /**
@@ -436,7 +436,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			throws RemoteException, RemoveException {
 		if (coll != null) {
 			FamilyLogicBean memFamLog = getServiceInstance(FamilyLogicBean.class);
-			NationalRegister natReg;
+			is.idega.block.nationalregister.data.bean.NationalRegister natReg;
 			Iterator<FamilyMember> iter = coll.iterator();
 			Collection<FamilyMember> coll2 = new ArrayList<FamilyMember>(coll);
 			Iterator<FamilyMember> iter2 = coll.iterator();
@@ -742,7 +742,6 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		if (success) {
 			doUpdateExternalContext(data);
 		}
-		//boolean success = updateNationRegisterEntry();
 		this.valueList = null;
 		return success;
 	}
@@ -804,12 +803,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		String newSsnOrName = getProperty(COLUMN_NEW_SSN_OR_NAME, data);
 		String dateOfBirth = getProperty(COLUMN_DATE_OF_BIRTH, data);
 
-		Group group;
 		boolean success = true;
-		if (ssn == null || ssn.equals("")) {
+		if (StringUtil.isEmpty(ssn)) {
 			return null;
 		}
-		group = getGroupForPostalCode(po);
+
+		Group group = getGroupForPostalCode(po);
 		if (!this.relationsOnly) {
 			// initialize business beans and data homes
 			success = this.natBiz.updateEntry(symbol, oldId, ssn, familyId, name, commune, street, building, floor,
