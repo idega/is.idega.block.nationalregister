@@ -296,13 +296,11 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				item = null;
 			}
 			this.file.close();
-			logger.info("NatRegImport processed RECORD [" + count + "] time: "
-					+ IWTimestamp.getTimestampRightNow().toString());
+			logger.info("NatRegImport processed RECORD [" + count + "] time: " + IWTimestamp.getTimestampRightNow().toString());
 			clock.stop();
 			long msTime = clock.getTime();
 			long secTime = msTime / 1000;
-			logger.info("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging "
-					+ (msTime / count) + "ms per record");
+			logger.info("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging " + (msTime / count) + "ms per record");
 			clock.start();
 			if (!this.skipRelations) {
 				handleFamilyRelation();
@@ -310,14 +308,14 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			clock.stop();
 			msTime = clock.getTime();
 			secTime = msTime / 1000;
-			logger.info("Time to handleFamilyRelation: " + clock.getTime() + " ms  OR "
-					+ ((int) (clock.getTime() / 1000)) + " s, averaging " + (msTime / count) + "ms per record");
+			logger.info("Time to handleFamilyRelation: " + clock.getTime() + " ms  OR " + ((int) (clock.getTime() / 1000)) + " s, averaging " + (msTime / count) + "ms per record");
 			printFailedRecords();
 			return true;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
+		} finally {
+			doUpdateExternalContext(successData);
 		}
 	}
 
@@ -732,15 +730,17 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		}
 	}
 
-	protected void doUpdateExternalContext(Map<Integer, String> data) {
+	protected void doUpdateExternalContext(List<Map<Integer, String>> data) {
 	}
+
+	private List<Map<Integer, String>> successData = new ArrayList<Map<Integer,String>>();
 
 	private boolean processRecord(String record) throws RemoteException, CreateException {
 		this.valueList = this.file.getValuesFromRecordString(record);
 		Map<Integer, String> data = storeNationRegisterEntry();
 		boolean success = data != null;
 		if (success) {
-			doUpdateExternalContext(data);
+			successData.add(data);
 		}
 		this.valueList = null;
 		return success;
