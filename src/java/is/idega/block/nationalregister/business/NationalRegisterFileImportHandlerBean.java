@@ -316,6 +316,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			return false;
 		} finally {
 			doUpdateExternalContext(successData);
+			reset();
 		}
 	}
 
@@ -734,6 +735,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	}
 
 	private List<Map<Integer, String>> successData = new ArrayList<Map<Integer,String>>();
+
+	protected void reset() {
+		successData = new ArrayList<Map<Integer,String>>();
+	}
 
 	private boolean processRecord(String record) throws RemoteException, CreateException {
 		this.valueList = this.file.getValuesFromRecordString(record);
