@@ -82,7 +82,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "po", length = 3)
 	private String po;
 
-	@Column(name = "address", length = 21)
+	@Column(name = "address", length = 100)
 	private String address;
 
 	@Column(name = "address_dode", length = 12)
@@ -97,7 +97,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "date_of_creation", length = 6)
 	private String dateOfCreation;
 
-	@Column(name = "last_domestic_address", length = 12)
+	@Column(name = "last_domestic_address", length = 100)
 	private String lastDomesticAddress;
 
 	@Column(name = "agent_ssn", length = 10)
@@ -106,7 +106,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "is_new", length = 1)
 	private String isNew;
 
-	@Column(name = "address_name", length = 21)
+	@Column(name = "address_name", length = 100)
 	private String addressName;
 
 	@Column(name = "date_of_deletion", length = 6)

@@ -127,7 +127,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			Integer id = null;
 			if (reg == null) {
 				reg = new NationalRegister();
-
+			}
+			if (reg.getId() == null) {
 				id = settings.getInt("nat_reg.generate_id_for_entity", -1);
 				if (id != null && id > 0) {
 					id++;
