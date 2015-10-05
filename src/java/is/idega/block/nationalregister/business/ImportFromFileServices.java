@@ -1,7 +1,5 @@
 package is.idega.block.nationalregister.business;
 
-import is.idega.block.nationalregister.data.NationalRegisterImportFileE36;
-
 import java.io.File;
 import java.util.logging.Level;
 
@@ -18,13 +16,16 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreUtil;
 
+import is.idega.block.nationalregister.data.NationalRegisterImportFileE36;
+
 @Service(ImportFromFileServices.BEAN_NAME)
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @RemoteProxy(creator=SpringCreator.class, creatorParams={
 	@Param(name="beanName", value=ImportFromFileServices.BEAN_NAME),
 	@Param(name="javascript", value="ImportFromFileServices")
 }, name="ImportFromFileServices")
-public class ImportFromFileServices extends DefaultSpringBean{
+public class ImportFromFileServices extends DefaultSpringBean {
+
 	public static final String BEAN_NAME = "importFromFileServices";
 
 	private IWResourceBundle getIwrb(IWContext iwc) {
@@ -37,7 +38,7 @@ public class ImportFromFileServices extends DefaultSpringBean{
 		IWContext iwc = CoreUtil.getIWContext();
 		IWResourceBundle iwrb = getIwrb(iwc);
 		try{
-			if(!iwc.isLoggedOn() || !iwc.getAccessController().isAdmin(iwc)){
+			if (!iwc.isLoggedOn() || !iwc.getAccessController().isAdmin(iwc)) {
 				throw new Exception("Do not have permission");
 			}
 			NationalRegisterFileImportHandler handler = new NationalRegisterFileImportHandlerBean();
@@ -48,7 +49,7 @@ public class ImportFromFileServices extends DefaultSpringBean{
 			handler.handleRecords();
 			return iwrb.getLocalizedString("success", "Success");
 		}catch (Exception e) {
-			getLogger().log(Level.WARNING, "Failed imorting from file: " + filePath, e);
+			getLogger().log(Level.WARNING, "Failed importing from file: " + filePath, e);
 		}
 		return iwrb.getLocalizedString("error", "Error");
 	}

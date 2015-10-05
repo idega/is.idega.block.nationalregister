@@ -1,12 +1,5 @@
 package is.idega.block.nationalregister.business;
 
-import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.family.business.FamilyLogicBean;
-import is.idega.block.family.data.FamilyMember;
-import is.idega.block.family.data.FamilyMemberHome;
-import is.idega.block.nationalregister.data.NationalRegisterFate;
-import is.idega.block.nationalregister.data.NationalRegisterFateHome;
-
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -49,6 +42,13 @@ import com.idega.util.ListUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.Timer;
+
+import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.family.business.FamilyLogicBean;
+import is.idega.block.family.data.FamilyMember;
+import is.idega.block.family.data.FamilyMemberHome;
+import is.idega.block.nationalregister.data.NationalRegisterFate;
+import is.idega.block.nationalregister.data.NationalRegisterFateHome;
 
 /**
  * @author palli
@@ -224,7 +224,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				this.performer = IWContext.getInstance().getCurrentUser();
 			}
 			catch (Exception n) {
-				logger.info("NationalRegisterImporter iwcontext instance not found");
+				logger.info("IWContext instance not found");
 				this.performer = null;
 			}
 			if (this.performer == null) {
