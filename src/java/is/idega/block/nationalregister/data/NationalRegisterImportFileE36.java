@@ -1,7 +1,5 @@
 package is.idega.block.nationalregister.data;
 
-import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +7,8 @@ import java.util.Collection;
 import com.idega.block.importer.data.GenericImportFile;
 import com.idega.block.importer.data.ImportFile;
 import com.idega.util.CoreConstants;
+
+import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
 
 /**
  * @author gimmi
@@ -30,8 +30,9 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getRecords()
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
-	public Collection getRecords() {
+	public Collection<String> getRecords() {
 		return super.getRecords();
 	}
 
