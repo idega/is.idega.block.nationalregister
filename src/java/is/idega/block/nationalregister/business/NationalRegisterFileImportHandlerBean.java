@@ -820,6 +820,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					sex, maritialStatus, empty, prohibitMarking, nationality, placeOfBirth, spouseSSN, fate, parish,
 					po, address, addressCode, dateOfModification, placementCode, dateOfCreation, lastDomesticAddress,
 					agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth, group);
+
 			if (FATE_DECEASED.equalsIgnoreCase(fate)) {
 				User user;
 				try {
@@ -829,10 +830,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					e.printStackTrace();
 					return null;
 				}
-				//user.setDeleted(true);
-				//user.setDeletedBy(((Integer) performer.getPrimaryKey()).intValue());
-				//user.setDeletedWhen(IWTimestamp.getTimestampRightNow());
-				//user.store();
+
 				if (this.deceasedAddressString == null) {
 					try {
 						IWBundle iwb = this.getIWApplicationContext().getIWMainApplication().getBundle(

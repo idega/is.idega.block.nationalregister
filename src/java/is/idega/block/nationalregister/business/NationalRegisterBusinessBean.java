@@ -1,9 +1,5 @@
 package is.idega.block.nationalregister.business;
 
-import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.nationalregister.data.bean.NationalRegister;
-import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +37,10 @@ import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
+
+import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.nationalregister.data.bean.NationalRegister;
+import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
 
 public class NationalRegisterBusinessBean extends IBOServiceBean implements NationalRegisterBusiness, UserGroupPlugInBusiness {
 
@@ -87,7 +87,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		return nationalRegisterDAO;
 	}
 
-	private void doUpdateNatRegEntry(
+	private NationalRegister doUpdateNatRegEntry(
 		final String symbol,
 		final String oldId,
 		final String ssn,
@@ -173,7 +173,11 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			} catch (Exception e) {
 				getLogger().log(Level.WARNING, "Error updating/creating nat. reg. entry with SSN: " + ssn, e);
 			}
+
+			return reg;
 		}
+
+		return null;
 	}
 
 	@Override
@@ -215,7 +219,39 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		try {
 			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
 
-			doUpdateNatRegEntry(symbol, oldId, ssn, familyId, name, commune, street, building, floor, sex, maritialStatus, empty, prohibitMarking, nationality, placeOfBirth, spouseSSN, fate, parish, po, address, addressCode, dateOfModification, placementCode, dateOfCreation, lastDomesticAddress, agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth);
+			doUpdateNatRegEntry(
+					symbol,
+					oldId,
+					ssn,
+					familyId,
+					name,
+					commune,
+					street,
+					building,
+					floor,
+					sex,
+					maritialStatus,
+					empty,
+					prohibitMarking,
+					nationality,
+					placeOfBirth,
+					spouseSSN,
+					fate,
+					parish,
+					po,
+					address,
+					addressCode,
+					dateOfModification,
+					placementCode,
+					dateOfCreation,
+					lastDomesticAddress,
+					agentSsn,
+					sNew,
+					addressName,
+					dateOfDeletion,
+					newSsnOrName,
+					dateOfBirth
+			);
 
 			IWTimestamp t = new IWTimestamp();
 
@@ -247,6 +283,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 			User user = userBiz.createUserByPersonalIDIfDoesNotExist(name, ssn, gender, t);
 
+			boolean changedName = false;
 			if (newSsnOrName != null && "".equalsIgnoreCase(newSsnOrName)) {
 				try {
 					Long.parseLong(newSsnOrName);
@@ -255,9 +292,16 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 					log("Changing user's personalID to "+newSsnOrName);
 				} catch (NumberFormatException n) {
 					user.setFullName(newSsnOrName);
+					user.setDisplayName(newSsnOrName);
 					user.store();
+					changedName = true;
 					log("Changing user's name to "+newSsnOrName);
 				}
+			}
+			if (!changedName && user != null && !StringUtil.isEmpty(name) && !name.equals(user.getName())) {
+				user.setFullName(name);
+				user.setDisplayName(name);
+				user.store();
 			}
 
 			Country country = null;
