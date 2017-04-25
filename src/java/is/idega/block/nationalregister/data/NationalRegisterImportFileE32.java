@@ -1,29 +1,30 @@
 package is.idega.block.nationalregister.data;
 
-import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.idega.block.importer.data.GenericImportFile;
 import com.idega.block.importer.data.ImportFile;
+import com.idega.util.CoreConstants;
+
+import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
 
 /**
  * @author gimmi
  */
-public class NationalRegisterImportFileE32		extends	GenericImportFile implements ImportFile {
+public class NationalRegisterImportFileE32 extends GenericImportFile implements ImportFile {
 
 	public NationalRegisterImportFileE32() {
 		super();
 		setRecordDilimiter("\n");
 	}
-	
+
 	public NationalRegisterImportFileE32(File file) {
 		this();
 		setFile(file);
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getRecords()
 	 */
@@ -31,33 +32,33 @@ public class NationalRegisterImportFileE32		extends	GenericImportFile implements
 	public Collection getRecords() {
 		return super.getRecords();
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.data.ImportFile#getValuesFromRecordString(java.lang.String)
 	 */
 	@Override
-	public ArrayList getValuesFromRecordString(String recordString) {
-		ArrayList values = new ArrayList();
+	public ArrayList<String> getValuesFromRecordString(String recordString) {
+		ArrayList<String> values = new ArrayList<>();
 		for (int i = 0; i < 28; i++) {
 			String value = getValueAtIndexFromRecordString(i,recordString);
 			if (value != null) {
 				values.add(value);
 			}
 			else {
-				values.add("");
+				values.add(CoreConstants.EMPTY);
 			}
 		}
-		
+
 		return values;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see com.idega.block.importer.data.ImportFile#getValueAtIndexFromRecordString(int, java.lang.String)
 	 */
-/*	
+/*
 FE        01010124701604745569pCcr gcvpitCCwv uoBo      00101000008700081   31   IS000001012001Ísak Miri Daníelsson                     000008700081                                                        107Birkimelur 8a        Birkimel 8a
-FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  BIS600001011944Sigurður Sigfússon             3108474029               100709                                                  Drekagil 28                                                      LÉST100709                  
-*/                         
+FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  BIS600001011944Sigurður Sigfússon             3108474029               100709                                                  Drekagil 28                                                      LÉST100709
+*/
 	@Override
 	public String getValueAtIndexFromRecordString(int index, String recordString) {
 		try {
@@ -87,7 +88,7 @@ FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  
 				case NationalRegisterFileImportHandlerBean.COLUMN_NEW : return recordString.substring(200, 201);
 				case NationalRegisterFileImportHandlerBean.COLUMN_PO : return recordString.substring(204,207);
 				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS_NAME  : return recordString.substring(207,228);
-				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.substring(228);
+				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.length() > 300 ? recordString.substring(228, 300) : recordString.substring(228);
 				default : return null;
 			}
 		}
