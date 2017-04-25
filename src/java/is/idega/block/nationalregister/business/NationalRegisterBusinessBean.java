@@ -371,15 +371,23 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	public void updateUserAddress(User user, UserBusiness userBiz, String address, String po, Country country, String city, Integer communeID, String addressName) throws RemoteException, CreateException {
 		PostalCode postalCode = getPostalCode(po);
 
-		Address entry = userBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
-		if (entry != null) {
-			entry.setStreetAddressNominative(addressName);
-			entry.store();
+		Address mainAddress = userBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		setAddressNominative(mainAddress, addressName);
+
+		Address coAddress = userBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		setAddressNominative(coAddress, addressName);
+	}
+
+	private void setAddressNominative(Address address, String addressName) {
+		if (address == null) {
+			return;
 		}
-		entry = userBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
-		if (entry != null) {
-			entry.setStreetAddressNominative(addressName);
-			entry.store();
+
+		try {
+			address.setStreetAddressNominative(addressName);
+			address.store();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error setting address name '" + addressName + "' for " + address, e);
 		}
 	}
 
