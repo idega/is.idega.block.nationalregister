@@ -1,6 +1,7 @@
 package is.idega.block.nationalregister.helper.impl;
 
 import java.io.File;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.directwebremoting.annotations.Param;
@@ -15,6 +16,7 @@ import com.idega.block.importer.data.GenericImportFile;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
@@ -37,69 +39,92 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 
 	@Override
 	@RemoteMethod
-	public boolean doImport(String filePath, String format, boolean deleteFile) {
-		if (StringUtil.isEmpty(filePath)) {
+	public boolean doImportFiles(List<String> filesPaths, String format, boolean deleteFiles) {
+		if (ListUtil.isEmpty(filesPaths)) {
 			return false;
 		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc.isLoggedOn() && iwc.isSuperAdmin()) {
-			try {
-				if (importInProgress) {
-					getLogger().warning("Import is already in progress");
-					return false;
-				}
-				importInProgress = true;
-
-				if (StringUtil.isEmpty(filePath)) {
-					getLogger().warning("File is not provided!");
-					return false;
-				}
-
-				File downloadedFile = new File(filePath);
-				if (!downloadedFile.exists()) {
-					getLogger().warning("File does not exist at " + downloadedFile.getAbsolutePath());
-					return false;
-				}
-				if (!downloadedFile.canRead()) {
-					getLogger().warning("Can not read file " + downloadedFile.getAbsolutePath());
-					return false;
-				}
-
-				NationalRegisterFileImportHandlerBean handler = new NationalRegisterFileImportHandlerBean();
-				GenericImportFile file = null;
-				if (format != null) {
-					switch (format) {
-					case "E32":
-						file = new NationalRegisterImportFileE32();
-						break;
-
-					case "E32b":
-						file = new NationalRegisterImportFileE32b();
-						break;
-
-					default:
-						file = new NationalRegisterImportFileE36();
-						break;
-					}
-				}
-				file = file == null ? new NationalRegisterImportFileE36() : file;
-				file.setFile(downloadedFile);
-				handler.setImportFile(file);
-				handler.handleRecords();
-
-				if (deleteFile) {
-					downloadedFile.delete();
-				}
-			} catch(Exception e) {
-				getLogger().log(Level.WARNING, "Failed importing national register from " + filePath, e);
-			} finally {
-				importInProgress = false;
-			}
-			return true;
+		if (iwc == null || !iwc.isSuperAdmin()) {
+			return false;
 		}
 
-		return false;
+		for (String filePath: filesPaths) {
+			doImportFile(filePath, format, deleteFiles);
+		}
+
+		return true;
+	}
+
+	@Override
+	@RemoteMethod
+	public boolean doImport(String filePath, String format, boolean deleteFile) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null || !iwc.isSuperAdmin()) {
+			return false;
+		}
+
+		return doImportFile(filePath, format, deleteFile);
+	}
+
+	private boolean doImportFile(String filePath, String format, boolean deleteFile) {
+		if (StringUtil.isEmpty(filePath)) {
+			return false;
+		}
+
+		try {
+			if (importInProgress) {
+				getLogger().warning("Import is already in progress");
+				return false;
+			}
+			importInProgress = true;
+
+			if (StringUtil.isEmpty(filePath)) {
+				getLogger().warning("File is not provided!");
+				return false;
+			}
+
+			File downloadedFile = new File(filePath);
+			if (!downloadedFile.exists()) {
+				getLogger().warning("File does not exist at " + downloadedFile.getAbsolutePath());
+				return false;
+			}
+			if (!downloadedFile.canRead()) {
+				getLogger().warning("Can not read file " + downloadedFile.getAbsolutePath());
+				return false;
+			}
+
+			NationalRegisterFileImportHandlerBean handler = new NationalRegisterFileImportHandlerBean();
+			GenericImportFile file = null;
+			if (format != null) {
+				switch (format) {
+				case "E32":
+					file = new NationalRegisterImportFileE32();
+					break;
+
+				case "E32b":
+					file = new NationalRegisterImportFileE32b();
+					break;
+
+				default:
+					file = new NationalRegisterImportFileE36();
+					break;
+				}
+			}
+			file = file == null ? new NationalRegisterImportFileE36() : file;
+			file.setFile(downloadedFile);
+			handler.setImportFile(file);
+			handler.handleRecords();
+
+			if (deleteFile) {
+				downloadedFile.delete();
+			}
+		} catch(Exception e) {
+			getLogger().log(Level.WARNING, "Failed importing national register from " + filePath, e);
+		} finally {
+			importInProgress = false;
+		}
+		return true;
 	}
 
 }
