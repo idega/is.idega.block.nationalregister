@@ -312,7 +312,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			printFailedRecords();
 			return true;
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			getLogger().log(Level.WARNING, "Error handling records from " + file, ex);
 			return false;
 		} finally {
 			doUpdateExternalContext(successData);
