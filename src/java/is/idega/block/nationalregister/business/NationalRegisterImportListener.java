@@ -58,6 +58,8 @@ public class NationalRegisterImportListener implements ActionListener {
 	}
 
 	public void doImport(String filePath, GenericImportFile file, boolean deleteFile) {
+		boolean success = false;
+		File downloadedFile = null;
 		try {
 			if (file == null) {
 				return;
@@ -73,7 +75,7 @@ public class NationalRegisterImportListener implements ActionListener {
 				return;
 			}
 
-			File downloadedFile = new File(filePath);
+			downloadedFile = new File(filePath);
 			if (!downloadedFile.exists()) {
 				return;
 			}
@@ -89,15 +91,15 @@ public class NationalRegisterImportListener implements ActionListener {
 			NationalRegisterFileImportHandler handler = getHandlerClass().newInstance();
 			file.setFile(downloadedFile);
 			handler.setImportFile(file);
-			handler.handleRecords();
-
-			if (deleteFile) {
-				downloadedFile.delete();
-			}
+			success = handler.handleRecords();
 		} catch(Exception e) {
 			getLogger().log(Level.WARNING, "Failed importing national register from " + filePath, e);
 		} finally {
 			importInProgress = false;
+
+			if (success && deleteFile && downloadedFile != null && downloadedFile.canWrite()) {
+				downloadedFile.delete();
+			}
 		}
 	}
 
