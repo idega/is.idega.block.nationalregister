@@ -83,7 +83,7 @@ public class NationalRegisterImportFileE32b extends GenericImportFile implements
 
 	@Override
 	public String getEncoding() {
-		return "ISO-8859-1";
+		return CoreConstants.ENCODING_UTF8;
 	}
 
 }
