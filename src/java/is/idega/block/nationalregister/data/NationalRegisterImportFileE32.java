@@ -88,7 +88,8 @@ FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  
 				case NationalRegisterFileImportHandlerBean.COLUMN_NEW : return recordString.substring(200, 201);
 				case NationalRegisterFileImportHandlerBean.COLUMN_PO : return recordString.substring(204,207);
 				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS_NAME  : return recordString.substring(207,228);
-				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.length() > 300 ? recordString.substring(228, 300) : recordString.substring(228);
+				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.length() > 272 ? recordString.substring(228, 272) : recordString.substring(228);
+				case NationalRegisterFileImportHandlerBean.COLUMN_STATUS : return recordString.length() > 276 ? recordString.substring(272, 276) : recordString.substring(272);
 				default : return null;
 			}
 		}

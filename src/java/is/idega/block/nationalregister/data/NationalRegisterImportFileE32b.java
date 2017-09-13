@@ -72,7 +72,8 @@ public class NationalRegisterImportFileE32b extends GenericImportFile implements
 				case NationalRegisterFileImportHandlerBean.COLUMN_NEW : return recordString.substring(200, 201);
 				case NationalRegisterFileImportHandlerBean.COLUMN_PO : return recordString.substring(204,207);
 				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS_NAME  : return recordString.substring(207,228);
-				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.substring(228, 300);
+				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.substring(228, 272);
+				case NationalRegisterFileImportHandlerBean.COLUMN_STATUS : return recordString.substring(272, 276);
 				default : return null;
 			}
 		}
