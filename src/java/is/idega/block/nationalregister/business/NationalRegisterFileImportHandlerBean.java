@@ -753,7 +753,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	@Override
 	public void printFailedRecords() {
-		System.out.println("Import failed for these records, please fix and import again:");
+		getLogger().warning("Import failed for these records, please fix and import again:");
 		Iterator<String> iter = this.failedRecordList.iterator();
 		while (iter.hasNext()) {
 			System.out.println(iter.next());
@@ -827,7 +827,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					user = this.uBiz.getUser(ssn);
 				}
 				catch (FinderException e) {
-					e.printStackTrace();
+					getLogger().log(Level.WARNING, "Failed to find user by personal ID: " + ssn, e);
 					return null;
 				}
 
@@ -840,7 +840,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					}
 					catch (Exception e) {
 						this.deceasedAddressString = "";
-						System.out.println("Unable to initialize deceasedAddressString");
+						getLogger().warning("Unable to initialize deceasedAddressString");
 					}
 				}
 				this.uBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null,
@@ -854,8 +854,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 						dom = new IWTimestamp(dateOfModification);
 					}
 					catch (IllegalArgumentException e) {
-						System.out.println("Could not parse the date '" + dateOfModification + "'");
-						e.printStackTrace();
+						getLogger().log(Level.WARNING, "Could not parse the date '" + dateOfModification + "'", e);
 						dom = IWTimestamp.RightNow();
 					}
 				}
@@ -961,13 +960,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			try {
 				group = this.cBiz.getOtherCommuneCreateIfNotExist().getGroup();
 				if (null != group) {
-					System.out.println("NationalRegisterImport : connecting po:'" + po + "' to group:'"
-							+ group.getName() + "'");
+					getLogger().info("NationalRegisterImport : connecting po:'" + po + "' to group:'" + group.getName() + "'");
 				}
 				this.postalToGroupMap.put(po, group);
 			}
 			catch (FinderException e) {
-				System.out.println("NationalRegisterImport : 'Other' group not found, throwing RuntimeException. \n\nMake sure the PostalCodeBundleStarter is run at least once.");
+				getLogger().warning("NationalRegisterImport : 'Other' group not found, throwing RuntimeException. \n\nMake sure the PostalCodeBundleStarter is run at least once.");
 				throw new RuntimeException(e);
 			}
 		}
