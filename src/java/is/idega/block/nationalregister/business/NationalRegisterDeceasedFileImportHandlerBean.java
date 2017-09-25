@@ -9,10 +9,6 @@
  */
 package is.idega.block.nationalregister.business;
 
-import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.nationalregister.data.NationalRegisterFate;
-import is.idega.block.nationalregister.data.NationalRegisterFateHome;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -41,7 +37,12 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.idega.util.LocaleUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.Timer;
+
+import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.nationalregister.data.NationalRegisterFate;
+import is.idega.block.nationalregister.data.NationalRegisterFateHome;
 
 public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBean
 	implements NationalRegisterDeceasedFileImportHandler, ImportFileHandler {
@@ -338,11 +339,13 @@ public class NationalRegisterDeceasedFileImportHandlerBean extends IBOServiceBea
 				street, commune, gender, maritialStatus, spouseSSN);
 
 		Gender userGender = null;
-		try {
-			userGender = getGender(gender);
-		}
-		catch (FinderException e) {
-			System.out.println(e.getMessage());
+		if (!StringUtil.isEmpty(gender)) {
+			try {
+				userGender = getGender(gender);
+			}
+			catch (FinderException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		IWBundle bundle = getIWMainApplication().getBundle(NationalRegisterDeceasedFileImportHandlerBean.IW_BUNDLE_IDENTIFIER);
 		String autoCreateUsersNonExistingUsersString = bundle.getProperty(AUTO_CREATE_NON_EXISTING_USERS_IN_DECEASED_IMPORT, "false");
