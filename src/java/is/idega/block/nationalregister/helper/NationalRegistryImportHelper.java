@@ -8,4 +8,6 @@ public interface NationalRegistryImportHelper {
 
 	public boolean doImportFiles(List<String> filesPaths, String format, boolean deleteFiles);
 
+	public boolean doImportDeceased(String filePath, boolean deleteFile);
+
 }

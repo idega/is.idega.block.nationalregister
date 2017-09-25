@@ -12,6 +12,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.idega.block.importer.business.ImportFileHandler;
 import com.idega.block.importer.data.GenericImportFile;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.presentation.IWContext;
@@ -19,7 +20,9 @@ import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
-import is.idega.block.nationalregister.business.NationalRegisterFileImportHandlerBean;
+import is.idega.block.nationalregister.business.NationalRegisterDeceasedFileImportHandler;
+import is.idega.block.nationalregister.business.NationalRegisterFileImportHandler;
+import is.idega.block.nationalregister.data.NationalRegisterImportFileDeceasedB;
 import is.idega.block.nationalregister.data.NationalRegisterImportFileE32;
 import is.idega.block.nationalregister.data.NationalRegisterImportFileE32b;
 import is.idega.block.nationalregister.data.NationalRegisterImportFileE36;
@@ -50,7 +53,7 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 		}
 
 		for (String filePath: filesPaths) {
-			doImportFile(filePath, format, deleteFiles);
+			doImportFile(filePath, format, deleteFiles, false, null);
 		}
 
 		return true;
@@ -64,10 +67,10 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 			return false;
 		}
 
-		return doImportFile(filePath, format, deleteFile);
+		return doImportFile(filePath, format, deleteFile, false, null);
 	}
 
-	private boolean doImportFile(String filePath, String format, boolean deleteFile) {
+	private <T extends GenericImportFile> boolean doImportFile(String filePath, String format, boolean deleteFile, boolean deceased, Class<T> fileFormat) {
 		if (StringUtil.isEmpty(filePath)) {
 			return false;
 		}
@@ -94,7 +97,9 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 				return false;
 			}
 
-			NationalRegisterFileImportHandlerBean handler = new NationalRegisterFileImportHandlerBean();
+			ImportFileHandler handler = deceased ?
+					getServiceInstance(NationalRegisterDeceasedFileImportHandler.class) :
+					getServiceInstance(NationalRegisterFileImportHandler.class);
 			GenericImportFile file = null;
 			if (format != null) {
 				switch (format) {
@@ -111,6 +116,9 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 					break;
 				}
 			}
+			if (fileFormat != null) {
+				file = fileFormat.newInstance();
+			}
 			file = file == null ? new NationalRegisterImportFileE36() : file;
 			file.setFile(downloadedFile);
 			handler.setImportFile(file);
@@ -125,6 +133,17 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 			importInProgress = false;
 		}
 		return true;
+	}
+
+	@Override
+	@RemoteMethod
+	public boolean doImportDeceased(String filePath, boolean deleteFile) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null || !iwc.isSuperAdmin()) {
+			return false;
+		}
+
+		return doImportFile(filePath, null, deleteFile, true, NationalRegisterImportFileDeceasedB.class);
 	}
 
 }
