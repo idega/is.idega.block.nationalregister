@@ -753,6 +753,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	@Override
 	public void printFailedRecords() {
+		if (ListUtil.isEmpty(failedRecordList)) {
+			return;
+		}
+
 		getLogger().warning("Import failed for these records, please fix and import again:");
 		Iterator<String> iter = this.failedRecordList.iterator();
 		while (iter.hasNext()) {
