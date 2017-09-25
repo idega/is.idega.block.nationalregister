@@ -1,5 +1,7 @@
 package is.idega.block.nationalregister.data;
 
+import com.idega.util.CoreConstants;
+
 import is.idega.block.nationalregister.business.NationalRegisterDeceasedFileImportHandlerBean;
 
 public class NationalRegisterImportFileDeceasedB extends NationalRegisterImportFileDeceased {
@@ -22,6 +24,11 @@ public class NationalRegisterImportFileDeceasedB extends NationalRegisterImportF
 		} catch(IndexOutOfBoundsException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public String getEncoding() {
+		return CoreConstants.ENCODING_UTF8;
 	}
 
 }
