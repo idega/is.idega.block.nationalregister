@@ -401,14 +401,25 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			if (postalCodes.containsKey(po)) {
 				return postalCodes.get(po);
 			} else {
+				PostalCodeHome postalCodeHome = ((PostalCodeHome) getIDOHome(PostalCode.class));
 				try {
-					PostalCode poCode = ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPostalCodeAndCountryId(po, getIcelandicCountryPK());
+					PostalCode poCode = postalCodeHome.findByPostalCodeAndCountryId(po, getIcelandicCountryPK());
 					postalCodes.put(po, poCode);
-					System.out.println("NationalRegisterBusinessBean: looking up postal code " + po);
+					getLogger().info("Looking up for postal code: '" + po + "'");
 					return poCode;
 				} catch(FinderException e) {
+					try {
+						PostalCode poCode = postalCodeHome.create();
+						poCode.setPostalCode(po);
+						poCode.store();
+						postalCodes.put(po, poCode);
+						getLogger().info("Created postal code entity (" + poCode + ") for code '" + po + "'");
+						return poCode;
+					} catch (CreateException ce) {
+						getLogger().warning("Did not found postal code entity for code '" + po + "'!");
+					}
+
 					postalCodes.put(po, null);
-					System.out.println("NationalRegisterBusinessBean: did not found postal code entity for code '" + po + "'!");
 					return null;
 				}
 			}
