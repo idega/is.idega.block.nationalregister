@@ -671,10 +671,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			getLogger().log(Level.WARNING, "Error removing all family relations for " + user + ", personal ID: " + user.getPersonalID());
 		}
 
-		// NationalRegisterBusiness natRegBus;
 		// remove spouse
-		// System.out.println("ADDING");
-		// rel.dumpInfo();
 		User spouse = rel.getSpouse();
 		if (spouse != null) {
 			if (isAllowedToAddToFamily(spouse)) {
