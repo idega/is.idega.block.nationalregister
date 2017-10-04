@@ -334,7 +334,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			FamilyLogic familyLogic = getFamilyLogic();
 			familyLogic.updateFamilyForUser(familyId, user);
 
-			if (userBiz.validatePersonalId(spouseSSN)) {
+			if (!StringUtil.isEmpty(spouseSSN) && userBiz.validatePersonalId(spouseSSN)) {
 				User spouse = null;
 				try {
 					spouse = userBiz.getUser(spouseSSN);
