@@ -277,7 +277,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			while (!(item = (String) getFile().getNextRecord()).equals("")) {
 				count++;
 				try {
-					if (!processRecord(item)) {
+					if (!processRecord(item, count)) {
 						this.failedRecordList.add(item);
 					}
 				} catch (Exception e) {
@@ -768,14 +768,14 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	protected void doUpdateExternalContext(List<Map<Integer, String>> data) {
 	}
 
-	private List<Map<Integer, String>> successData = new ArrayList<Map<Integer,String>>();
+	protected List<Map<Integer, String>> successData = new ArrayList<Map<Integer,String>>();
 
 	protected void reset() {
 		successData = new ArrayList<Map<Integer,String>>();
 	}
 
-	private boolean processRecord(String record) throws RemoteException, CreateException {
-		this.valueList = this.file.getValuesFromRecordString(record);
+	protected boolean processRecord(String record, Integer index) throws RemoteException, CreateException {
+		this.valueList = getFile().getValuesFromRecordString(record);
 		Map<Integer, String> data = storeNationRegisterEntry();
 		boolean success = data != null;
 		if (success) {
@@ -810,7 +810,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		return this.natBiz.updateEntryAddress(ssn, addressName);
 	}
 
-	private Map<Integer, String> storeNationRegisterEntry() throws RemoteException, CreateException {
+	protected Map<Integer, String> storeNationRegisterEntry() throws RemoteException, CreateException {
 		Map<Integer, String> data = new HashMap<Integer, String>();
 
 		// variables
@@ -1081,4 +1081,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		}
 	}
 	// TODO add fix for specific groupIDs for certain people
+
+	public void setValueList(List<String> valueList) {
+		this.valueList = valueList;
+	}
 }
