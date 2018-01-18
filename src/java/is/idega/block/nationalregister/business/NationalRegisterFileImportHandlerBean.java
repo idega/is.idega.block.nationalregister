@@ -185,6 +185,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	public final static String IW_BUNDLE_IDENTIFIER = "is.idega.block.nationalregister";
 
+	protected ImportFile getFile() {
+		return file;
+	}
+	
 	/**
 	 * @see com.idega.block.importer.business.ImportFileHandler#handleRecords()
 	 */
@@ -254,10 +258,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			if (this.citizenGroupFix) {
 				logger.info("NationalRegisterHandler citizenGroupFix variable set to TRUE");
 			}
-			long totalBytes = this.file.getFile().length();
+			long totalBytes = getFile().getFile().length();
 			long totalRecords = totalBytes / BYTES_PER_RECORD;
 			if (totalRecords == 0) {
-				Collection<String> allRecords = this.file.getRecords();
+				Collection<String> allRecords = getFile().getRecords();
 				totalRecords = ListUtil.isEmpty(allRecords) ? 1 : allRecords.size();
 			}
 			this.twoDigits.setMinimumIntegerDigits(2);
@@ -270,7 +274,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			double progress = 0;
 			int intervalBetweenOutput = 100;
 			logger.info("NatRegImport processing RECORD [0] time: " + IWTimestamp.getTimestampRightNow().toString());
-			while (!(item = (String) this.file.getNextRecord()).equals("")) {
+			while (!(item = (String) getFile().getNextRecord()).equals("")) {
 				count++;
 				try {
 					if (!processRecord(item)) {
@@ -294,7 +298,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				}
 				item = null;
 			}
-			this.file.close();
+			getFile().close();
 			logger.info("NatRegImport processed RECORD [" + count + "] time: " + IWTimestamp.getTimestampRightNow().toString());
 			clock.stop();
 			long msTime = clock.getTime();
@@ -311,7 +315,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			printFailedRecords();
 			return true;
 		} catch (Exception ex) {
-			getLogger().log(Level.WARNING, "Error handling records from " + file, ex);
+			getLogger().log(Level.WARNING, "Error handling records from " + getFile(), ex);
 			return false;
 		} finally {
 			doUpdateExternalContext(successData);
@@ -1019,7 +1023,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			} catch (RuntimeException e) {
 				return null;
 			}
-			if (this.file.getEmptyValueString().equals(value)) {
+			if (getFile().getEmptyValueString().equals(value)) {
 				return null;
 			} else {
 				if (data != null) {
