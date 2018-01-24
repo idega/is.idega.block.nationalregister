@@ -30,7 +30,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "old_id", length = 8)
 	private String oldId;
 
-	@Column(name = "ssn", length = 10, unique = true)
+	@Column(name = "ssn", length = 12, unique = true)
 	@Index(name = "ssn_index", columnNames = {"ssn"})
 	private String ssn;
 
@@ -70,7 +70,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "birth_place", length = 4)
 	private String birthPlace;
 
-	@Column(name = "spouse_ssn", length = 10)
+	@Column(name = "spouse_ssn", length = 12)
 	private String spouseSSN;
 
 	@Column(name = "status", length = 4)
@@ -100,7 +100,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "last_domestic_address", length = 100)
 	private String lastDomesticAddress;
 
-	@Column(name = "agent_ssn", length = 10)
+	@Column(name = "agent_ssn", length = 12)
 	private String agentSSN;
 
 	@Column(name = "is_new", length = 1)
