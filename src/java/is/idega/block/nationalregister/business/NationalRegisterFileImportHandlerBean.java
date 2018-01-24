@@ -303,7 +303,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			clock.stop();
 			long msTime = clock.getTime();
 			long secTime = msTime / 1000;
-			logger.info("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging " + (msTime / count) + "ms per record");
+			logger.info("Time to handleRecords: " + msTime + " ms  OR " + secTime + " s, averaging " + (count > 0 ? (msTime / count) : 0) + "ms per record");
 			clock.start();
 			if (!this.skipRelations) {
 				handleFamilyRelation();
@@ -311,7 +311,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			clock.stop();
 			msTime = clock.getTime();
 			secTime = msTime / 1000;
-			logger.info("Time to handleFamilyRelation: " + clock.getTime() + " ms  OR " + ((int) (clock.getTime() / 1000)) + " s, averaging " + (msTime / count) + "ms per record");
+			logger.info("Time to handleFamilyRelation: " + clock.getTime() + " ms  OR " + ((int) (clock.getTime() / 1000)) + " s, averaging " + (count > 0 ? (msTime / count) : 0) + "ms per record");
 			printFailedRecords();
 			return true;
 		} catch (Exception ex) {
