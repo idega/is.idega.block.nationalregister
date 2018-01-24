@@ -79,7 +79,7 @@ public class NationalRegister implements Serializable {
 	@Column(name = "parish", length = 3)
 	private String parish;
 
-	@Column(name = "po", length = 3)
+	@Column(name = "po", length = 5)
 	private String po;
 
 	@Column(name = "address", length = 100)
