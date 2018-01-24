@@ -307,7 +307,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			Country country = null;
 			Integer communeID = null;
 			String city = null;
-			if (commune.substring(0,2).equals("99")) {
+			if (commune != null && commune.length() > 2 && commune.substring(0,2).equals("99")) {
 				country = getCountryByISOAbbreviation(commune.substring(2,4));
 			} else {
 				country = getCountryByISOAbbreviation("IS");
