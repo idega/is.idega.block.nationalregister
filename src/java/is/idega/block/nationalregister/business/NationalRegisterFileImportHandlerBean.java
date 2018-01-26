@@ -131,6 +131,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	public final static int COLUMN_DATE_OF_BIRTH = 30;
 
+	public final static int COLUMN_CITY = 31;
+
 	private final static String PROPERTY_NAME_RELATION_ONLY = "NAT_REG_RELATION_ONLY";
 
 	private final static String PROPERTY_NAME_POSTAL_CODE_FIX = "NAT_REG_POSTAL_CODE_FIX";
@@ -845,6 +847,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		String dateOfDeletion = getProperty(COLUMN_DATE_OF_DELETION, data);
 		String newSsnOrName = getProperty(COLUMN_NEW_SSN_OR_NAME, data);
 		String dateOfBirth = getProperty(COLUMN_DATE_OF_BIRTH, data);
+		String city = getProperty(COLUMN_CITY, data);
 
 		boolean success = true;
 		if (StringUtil.isEmpty(ssn)) {
@@ -882,9 +885,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					}
 				}
 				this.uBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null,
-						null, null, null, null);
+						city, null, null, null);
 				this.uBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null,
-						null, null, null, null);
+						city, null, null, null);
 				FamilyLogic familyService = getMemberFamilyLogic();
 				IWTimestamp dom = new IWTimestamp();
 				if (dateOfModification != null && !"".equals(dateOfModification.trim())) {
@@ -933,7 +936,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				try {
 					// User user = uBiz.getUser(ssn);
 					if (this.postalCodeFix) {
-						this.natBiz.updateUserAddress(this.uBiz.getUser(ssn), this.uBiz, address, po, null, null, null, null);
+						this.natBiz.updateUserAddress(this.uBiz.getUser(ssn), this.uBiz, address, po, null, city, null, null);
 					}
 					return success ? data : null;
 				}
