@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.ejb.CreateException;
@@ -25,6 +26,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.UserBusiness;
@@ -35,6 +37,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.LocaleUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -310,7 +313,12 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			if (commune != null && commune.length() > 2 && commune.substring(0,2).equals("99")) {
 				country = getCountryByISOAbbreviation(commune.substring(2,4));
 			} else {
-				country = getCountryByISOAbbreviation("IS");
+				String icelandISOAbbreviation = LocaleUtil.getIcelandicLocale().getCountry(), countryISOAbbreviation = null;
+				Locale defaultLocale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
+				if (defaultLocale != null && !defaultLocale.toString().equals(Locale.ENGLISH.toString())) {
+					countryISOAbbreviation = defaultLocale.getCountry();
+				}
+				country = getCountryByISOAbbreviation(StringUtil.isEmpty(countryISOAbbreviation) ? icelandISOAbbreviation : countryISOAbbreviation);
 				communeID = getCommuneIDFromCommuneCode(commune);
 				city = getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString()));
 			}
