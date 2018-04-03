@@ -1,10 +1,6 @@
 package is.idega.block.nationalregister.business;
 
 
-import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.nationalregister.data.bean.NationalRegister;
-import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
-
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +17,10 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+
+import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.nationalregister.data.bean.NationalRegister;
+import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
 
 public interface NationalRegisterBusiness extends IBOService, UserGroupPlugInBusiness {
 
@@ -49,7 +49,7 @@ public interface NationalRegisterBusiness extends IBOService, UserGroupPlugInBus
 			String dateOfModification, String placementCode,
 			String dateOfCreation, String lastDomesticAddress, String agentSsn,
 			String sNew, String addressName, String dateOfDeletion,
-			String newSsnOrName, String dateOfBirth, Group citizenGroup)
+			String newSsnOrName, String dateOfBirth, Group citizenGroup, String city)
 			throws RemoteException;
 
 	/**

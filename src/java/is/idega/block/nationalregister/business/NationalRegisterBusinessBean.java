@@ -217,7 +217,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		String dateOfDeletion,
 		String newSsnOrName,
 		String dateOfBirth,
-		Group citizenGroup
+		Group citizenGroup,
+		String city
 	) {
 		try {
 			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
@@ -309,7 +310,6 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 			Country country = null;
 			Integer communeID = null;
-			String city = null;
 			if (commune != null && commune.length() > 2 && commune.substring(0,2).equals("99")) {
 				country = getCountryByISOAbbreviation(commune.substring(2,4));
 			} else {
@@ -320,7 +320,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				}
 				country = getCountryByISOAbbreviation(StringUtil.isEmpty(countryISOAbbreviation) ? icelandISOAbbreviation : countryISOAbbreviation);
 				communeID = getCommuneIDFromCommuneCode(commune);
-				city = getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString()));
+				city = StringUtil.isEmpty(city) ? getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString())) : city;
 			}
 
 			updateUserAddress(user, userBiz, address, po, country, city, communeID, addressName);

@@ -190,7 +190,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	protected ImportFile getFile() {
 		return file;
 	}
-	
+
 	/**
 	 * @see com.idega.block.importer.business.ImportFileHandler#handleRecords()
 	 */
@@ -860,7 +860,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			success = this.natBiz.updateEntry(symbol, oldId, ssn, familyId, name, commune, street, building, floor,
 					sex, maritialStatus, empty, prohibitMarking, nationality, placeOfBirth, spouseSSN, fate, parish,
 					po, address, addressCode, dateOfModification, placementCode, dateOfCreation, lastDomesticAddress,
-					agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth, group);
+					agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth, group, city);
 
 			if (FATE_DECEASED.equalsIgnoreCase(fate)) {
 				User user;
