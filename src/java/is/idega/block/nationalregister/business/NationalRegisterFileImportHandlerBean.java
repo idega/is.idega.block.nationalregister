@@ -902,8 +902,16 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				else {
 					dom = IWTimestamp.RightNow();
 				}
-				familyService.registerAsDeceased(user, dom.getDate(), this.performer);
-				removeAllFamilyRelationsForUser(user);
+				try {
+					familyService.registerAsDeceased(user, dom.getDate(), this.performer);
+				} catch (Exception e) {
+					getLogger().warning("Error registering " + user + " (" + user.getPersonalID() + ") as deceased");
+				}
+				try {
+					removeAllFamilyRelationsForUser(user);
+				} catch (Exception e) {
+					getLogger().warning("Error removing family relations for " + user + " (" + user.getPersonalID() + ")");
+				}
 			}
 			if (FATE_CHANGE_PERSONAL_ID.equalsIgnoreCase(fate)) {
 				try {
