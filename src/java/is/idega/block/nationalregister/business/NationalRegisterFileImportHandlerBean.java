@@ -884,10 +884,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 						getLogger().warning("Unable to initialize deceasedAddressString");
 					}
 				}
-				this.uBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null,
-						city, null, null, null);
-				this.uBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null,
-						city, null, null, null);
+
+				this.uBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null, city, null, null, null);
+				this.uBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null, city, null, null, null);
+
 				FamilyLogic familyService = getMemberFamilyLogic();
 				IWTimestamp dom = new IWTimestamp();
 				if (dateOfModification != null && !"".equals(dateOfModification.trim())) {
@@ -928,13 +928,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				}
 				return success ? data : null;
 			}
-			/*
-			 * if(FATE_CHANGE_OLD_ID.equalsIgnoreCase(fate)){
-			 * natBiz.updateUserOldID(oldId,ssn); return true; }
-			 */
+
 			if (this.postalCodeFix) {
 				try {
-					// User user = uBiz.getUser(ssn);
 					if (this.postalCodeFix) {
 						this.natBiz.updateUserAddress(this.uBiz.getUser(ssn), this.uBiz, address, po, null, city, null, null);
 					}
