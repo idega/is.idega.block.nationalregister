@@ -362,14 +362,8 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 					} catch (Exception e) {}
 				}
 			}
-		} catch (CreateException e) {
-			e.printStackTrace();
-			return false;
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FinderException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error updating " + ssn, e);
 			return false;
 		}
 
