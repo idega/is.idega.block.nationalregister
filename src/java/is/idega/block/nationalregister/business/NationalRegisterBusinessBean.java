@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.ejb.CreateException;
@@ -13,6 +14,8 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -39,11 +42,13 @@ import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.LocaleUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.nationalregister.data.bean.NationalRegister;
 import is.idega.block.nationalregister.data.bean.NationalRegisterDAO;
+import is.idega.block.nationalregister.service.NationalRegistryGateway;
 
 public class NationalRegisterBusinessBean extends IBOServiceBean implements NationalRegisterBusiness, UserGroupPlugInBusiness {
 
@@ -687,5 +692,37 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				return null;
 			}
 		}
+	}
+
+	@Override
+	public User getUserFromNationalRegistry(String personalId) {
+		if (StringUtil.isEmpty(personalId)) {
+			return null;
+		}
+
+		Map<String, NationalRegistryGateway> gateways = null;
+		try {
+			WebApplicationContext webAppContext = WebApplicationContextUtils.getWebApplicationContext(getIWMainApplication().getServletContext());
+			gateways = webAppContext.getBeansOfType(NationalRegistryGateway.class);
+			if (!MapUtil.isEmpty(gateways)) {
+				for (NationalRegistryGateway gateway: gateways.values()) {
+					User user = gateway.getUserFromNationalRegistry(personalId);
+					if (user != null) {
+						return user;
+					}
+				}
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting user by personal ID " + personalId + " from National Registry gateways " + gateways, e);
+		}
+
+		try {
+			UserBusiness userBusiness = getServiceInstance(UserBusiness.class);
+			return userBusiness.getUser(personalId);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting user by personal ID " + personalId + " from National Registry", e);
+		}
+
+		return null;
 	}
 }

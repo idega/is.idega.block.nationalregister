@@ -211,4 +211,7 @@ public interface NationalRegisterBusiness extends IBOService, UserGroupPlugInBus
 	 */
 	public String getCityFromPostalCode(String postalCodeIdentifier,
 			int countryID) throws RemoteException;
+
+	public User getUserFromNationalRegistry(String personalId);
+
 }
