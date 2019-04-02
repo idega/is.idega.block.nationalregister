@@ -1,25 +1,28 @@
 package is.idega.block.nationalregister.webservice.client.business;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+
+import javax.xml.rpc.ServiceException;
+
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import com.idega.core.business.DefaultSpringBean;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
+
 import is.idega.block.nationalregister.webservice.client.skyrr.Faersla;
 import is.idega.block.nationalregister.webservice.client.skyrr.Uttak;
 import is.idega.block.nationalregister.webservice.client.skyrr.Xml_ServiceLocator;
 import is.idega.block.nationalregister.webservice.client.skyrr.Xml_ServiceSoap_PortType;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-
-import javax.xml.rpc.ServiceException;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
-
-@Scope("singleton")
 @Service("skyrrClient")
-public class SkyrrClient {
+@Scope(BeanDefinition.SCOPE_SINGLETON)
+public class SkyrrClient extends DefaultSpringBean {
+
 	private static final String DEFAULT_ENDPOINT = "https://gognxml.uh.is/xml_service.asmx";
 	private static final String ENDPOINT_ATTRIBUTE_NAME = "skyrr_natreg_endpoint";
 
@@ -62,10 +65,10 @@ public class SkyrrClient {
 
 				return createUserHolderFromFaersla(entry);
 			} else {
-				System.out.println(res.getVILLA());
+				getLogger().warning("Personal ID: " + personalID + ": " + res.getVILLA());
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting user by personal ID " + personalID + ". Login: " + login, e);
 		}
 
 		return null;
@@ -80,13 +83,13 @@ public class SkyrrClient {
 			if (res.isFANNST()) {
 				Object ret[] = res.getNIDURSTADA();
 				Faersla entry = (Faersla) ret[0];
-				
+
 				return createCompanyHolderFromFaersla(entry);
 			} else {
-				System.out.println(res.getVILLA());
+				getLogger().warning("Personal ID: " + personalID + ": " + res.getVILLA());
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting company by personal ID " + personalID + ". Login: " + login, e);
 		}
 
 		return null;
@@ -107,6 +110,7 @@ public class SkyrrClient {
 	}
 
 	private class SkyrrLoginClass {
+
 		protected String origin = null;
 		protected String payersPersonalID = null;
 		protected String username = null;
@@ -114,6 +118,7 @@ public class SkyrrClient {
 
 		public SkyrrLoginClass() {
 			super();
+
 			IWMainApplicationSettings settings = IWMainApplication
 					.getDefaultIWApplicationContext().getApplicationSettings();
 			origin = settings.getProperty(ORIGIN, "");
@@ -121,9 +126,16 @@ public class SkyrrClient {
 			username = settings.getProperty(USERNAME, "");
 			password = settings.getProperty(PASSWORD, "");
 		}
+
+		@Override
+		public String toString() {
+			return "Origin: " + origin + ", payersPersonalID: " + payersPersonalID + ", username: " + username + ", password: " + password;
+		}
+
 	}
 
 	private SkyrrLoginClass getLogin() {
 		return new SkyrrLoginClass();
 	}
+
 }
