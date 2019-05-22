@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -450,8 +451,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		Collection<FamilyMember> coll2 = new ArrayList<FamilyMember>(coll);
 		Iterator<FamilyMember> iter2 = coll.iterator();
 		Collection<User> parents = new ArrayList<User>();
-		User user;
-		User user2;
+		User user = null;
+		User user2 = null;
 		Age age;
 		int oldestAge = 0;
 		String spouseSSN;
@@ -473,6 +474,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		// Loop through all family members to figure out what the relations
 		// are
 		Logger logger = getLogger();
+		Set<User> spouses = new HashSet<>();
 		for (Iterator<FamilyMember> iter = coll.iterator(); iter.hasNext();) {
 			member = iter.next();
 			user = member.getUser();
@@ -515,6 +517,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					newrelations.put(spouse, newRelations2);
 					oldrelations.put(spouse, oldRelations2);
 					parents.add(spouse);
+					spouses.add(spouse);
 					break;
 				}
 				catch (FinderException e) {
@@ -525,13 +528,15 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				}
 			}
 		}
-		getLogger().info("Finished handling spouses for family: " + key);
+		getLogger().info("Finished handling spouses (" + spouses + ") for family: " + key + ", " + user + ". New relations: " + newrelations + ". Old relations: " + oldrelations);
 
 		if (parents.isEmpty() && oldestPerson != null) {
 			parents.add(oldestPerson);
 		}
 
 		FamilyMember member2;
+		Set<User> siblings = new HashSet<>(), children = new HashSet<>(), parentsInfo = new HashSet<>();
+		spouses = new HashSet<>();
 		for (Iterator<FamilyMember> iter = coll.iterator(); iter.hasNext();) {
 			member = iter.next();
 			user = member.getUser();
@@ -570,44 +575,55 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					if (parents.contains(user2)) {
 						newRelations1.setSpouse(user2);
 						newRelations2.setSpouse(user);
+						spouses.add(user2);
+						spouses.add(user);
 					}
 					else {
 						newRelations1.addChild(user2);
+						children.add(user2);
 						newRelations1.addIsCustodianFor(user2);
 						newRelations2.addParent(user);
+						parentsInfo.add(user);
 						newRelations2.addHasCustodian(user);
 					}
 				}
 				else {
 					if (parents.contains(user2)) {
 						newRelations1.addParent(user2);
+						parentsInfo.add(user2);
 						newRelations1.addHasCustodian(user2);
 						newRelations2.addChild(user);
+						children.add(user);
 						newRelations2.addIsCustodianFor(user);
 					}
 					else {
 						newRelations1.addSibling(user2);
 						newRelations2.addSibling(user);
+						siblings.add(user2);
+						siblings.add(user);
 					}
 				}
 			}
 		}
-		getLogger().info("Finished handling siblings, children, custodains, parents and spouses for family: " + key);
+		getLogger().info("Finished handling siblings (" + siblings + "), children (" + children + "), custodains, parents (" + parentsInfo +
+				") and spouses (" + spouses + ") for family: " + key + ". New relations: " + newrelations + ". Old relations: " + oldrelations);
 
 		for (User tmpuser: newrelations.keySet()) {
 			Relations newR = newrelations.get(tmpuser);
 			Relations oldR = oldrelations.get(tmpuser);
 			try {
 				Relations newToAdd = Relations.inANotB(newR, oldR, getMemberFamilyLogic());
+				getLogger().info("Will add relations for " + tmpuser + ": " + newToAdd);
 				addNewRelations(memFamLog, tmpuser, newToAdd);
 			}
 			catch (CreateException e) {
 				e.printStackTrace();
 			}
 			Relations oldToRemove = Relations.inANotB(oldR, newR, getMemberFamilyLogic());
+			getLogger().info("Will remove terminated relations for " + tmpuser + ": " + oldToRemove);
 			removeTerminatedRelations(memFamLog, tmpuser, oldToRemove);
 		}
-		getLogger().info("Finished handling family relations for family: " + key);
+		getLogger().info("Finished handling family relations (new relations: " + newrelations + ", old relations: " + oldrelations + ") for family: " + key);
 
 		return true;
 	}

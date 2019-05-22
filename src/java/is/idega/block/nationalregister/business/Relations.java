@@ -1,11 +1,5 @@
 package is.idega.block.nationalregister.business;
 
-import is.idega.block.family.business.FamilyLogic;
-import is.idega.block.family.business.NoChildrenFound;
-import is.idega.block.family.business.NoCustodianFound;
-import is.idega.block.family.business.NoParentFound;
-import is.idega.block.family.business.NoSpouseFound;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,11 +8,18 @@ import java.util.Iterator;
 import com.idega.business.IBOLookupException;
 import com.idega.user.data.User;
 
+import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.family.business.NoChildrenFound;
+import is.idega.block.family.business.NoCustodianFound;
+import is.idega.block.family.business.NoParentFound;
+import is.idega.block.family.business.NoSpouseFound;
+
 
 /**
  * @author gimmi
  */
 public class Relations{
+
 	private User user = null;
 	private User spouse = null;
 	private Collection<User> child = new ArrayList<User>();
@@ -94,36 +95,61 @@ public class Relations{
 		return this.child;
 	}
 
-	public void dumpInfo(){
-		System.out.println("Relations for user "+this.user.getName()+" - "+this.user.getPersonalID());
+	@Override
+	public String toString() {
+		String info = getInfo();
+		return info;
+	}
+
+	public void dumpInfo() {
+		System.out.println(getInfo());
+	}
+
+	private String getInfo() {
+		if (user == null) {
+			return "Unknown";
+		}
+
+		StringBuilder info = new StringBuilder("Relations for user "+this.user.getName()+" - "+this.user.getPersonalID());
 		if(null!=this.spouse){
-			System.out.println("spouse: "+this.spouse+" - "+this.spouse.getPersonalID());
+			info.append(" spouse: "+this.spouse+" - "+this.spouse.getPersonalID());
 		}
-		Iterator<User> iter = this.child.iterator();
-		while(iter.hasNext()){
-			User user = iter.next();
-			System.out.println("child: "+user.getName()+" - "+user.getPersonalID());
+		if (child != null) {
+			Iterator<User> iter = this.child.iterator();
+			while(iter.hasNext()){
+				User user = iter.next();
+				info.append(" child: "+user.getName()+" - "+user.getPersonalID());
+			}
 		}
-		iter = this.parent.iterator();
-		while(iter.hasNext()){
-			User user = iter.next();
-			System.out.println("parent: "+user.getName()+" - "+user.getPersonalID());
+		if (parent != null) {
+			Iterator<User> iter = this.parent.iterator();
+			while(iter.hasNext()){
+				User user = iter.next();
+				info.append(" parent: "+user.getName()+" - "+user.getPersonalID());
+			}
 		}
-		iter = this.isCustodianFor.iterator();
-		while(iter.hasNext()){
-			User user = iter.next();
-			System.out.println("is custodian for: "+user.getName()+" - "+user.getPersonalID());
+		if (isCustodianFor != null) {
+			Iterator<User> iter = this.isCustodianFor.iterator();
+			while(iter.hasNext()){
+				User user = iter.next();
+				info.append(" is custodian for: "+user.getName()+" - "+user.getPersonalID());
+			}
 		}
-		iter = this.hasCustodian.iterator();
-		while(iter.hasNext()){
-			User user = iter.next();
-			System.out.println("has custodian: "+user.getName()+" - "+user.getPersonalID());
+		if (hasCustodian != null) {
+			Iterator<User> iter = this.hasCustodian.iterator();
+			while(iter.hasNext()){
+				User user = iter.next();
+				info.append(" has custodian: "+user.getName()+" - "+user.getPersonalID());
+			}
 		}
-		iter = this.sibling.iterator();
-		while(iter.hasNext()){
-			User user = iter.next();
-			System.out.println("sibling: "+user.getName()+" - "+user.getPersonalID());
+		if (sibling != null) {
+			Iterator<User> iter = this.sibling.iterator();
+			while(iter.hasNext()){
+				User user = iter.next();
+				info.append(" sibling: "+user.getName()+" - "+user.getPersonalID());
+			}
 		}
+		return info.toString();
 	}
 
 	public void setForUser(User user) throws IBOLookupException, RemoteException{
