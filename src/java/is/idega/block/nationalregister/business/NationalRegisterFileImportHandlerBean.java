@@ -30,6 +30,7 @@ import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.UserBusiness;
@@ -620,12 +621,76 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				e.printStackTrace();
 			}
 			Relations oldToRemove = Relations.inANotB(oldR, newR, getMemberFamilyLogic());
+			doMakeSureOnlyProcessedRelationsRemoved(oldToRemove);
 			getLogger().info("Will remove terminated relations for " + tmpuser + ": " + oldToRemove);
 			removeTerminatedRelations(memFamLog, tmpuser, oldToRemove);
 		}
 		getLogger().info("Finished handling family relations (new relations: " + newrelations + ", old relations: " + oldrelations + ") for family: " + key);
 
 		return true;
+	}
+
+	private void doMakeSureOnlyProcessedRelationsRemoved(Relations oldToRemove) {
+		if (oldToRemove == null) {
+			return;
+		}
+
+		if (!IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("nr.check_if_relation_processed_before_removing", true)) {
+			return;
+		}
+
+		User spouse = oldToRemove.getSpouse();
+		Boolean spouseProcessed = isUserProcessed(spouse);
+		if (spouseProcessed != null && !spouseProcessed) {
+			getLogger().info("Retaining spouse " + spouse + " for " + oldToRemove + ". Spouse was not included in update");
+			oldToRemove.setSpouse(null);	//	Can not remove spouse - he/she was not included in update
+		}
+
+		getRelationsToRetain(oldToRemove, oldToRemove.getChildren());
+		getRelationsToRetain(oldToRemove, oldToRemove.getParents());
+		getRelationsToRetain(oldToRemove, oldToRemove.getSiblings());
+		getRelationsToRetain(oldToRemove, oldToRemove.getIsCustodianFor());
+		getRelationsToRetain(oldToRemove, oldToRemove.getHasCustodians());
+	}
+
+	private List<User> getRelationsToRetain(Relations oldToRemove, Collection<User> relations) {
+		if (ListUtil.isEmpty(relations)) {
+			return null;
+		}
+
+		List<User> relationsToRetain = new ArrayList<>();
+		for (User relation: relations) {
+			Boolean childProcessed = isUserProcessed(relation);
+			if (childProcessed != null && !childProcessed) {
+				relationsToRetain.add(relation);
+			}
+		}
+		if (!ListUtil.isEmpty(relationsToRetain)) {
+			getLogger().info("Retaining relations " + relationsToRetain + " for " + oldToRemove + ". They were not included in update");
+			relations.removeAll(relationsToRetain);	//	Can not remove relation - he/she was not included in update
+		}
+
+		return relationsToRetain;
+	}
+
+	private Boolean isUserProcessed(User user) {
+		if (user == null || ListUtil.isEmpty(successData)) {
+			return null;
+		}
+
+		String personalId = user.getPersonalID();
+		if (StringUtil.isEmpty(personalId)) {
+			return null;
+		}
+
+		for (Map<Integer, String> data: successData) {
+			String userPersonalId = data.get(NationalRegisterFileImportHandlerBean.COLUMN_SSN);
+			if (!StringUtil.isEmpty(userPersonalId) && userPersonalId.equals(personalId)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
