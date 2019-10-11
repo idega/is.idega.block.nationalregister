@@ -683,6 +683,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			return null;
 		}
 
+		if (user.getDeleted() || user.isDeceased()) {
+			return true;	//	Allowing to remove deleted or deceased relation
+		}
+
 		for (Map<Integer, String> data: successData) {
 			String userPersonalId = data.get(NationalRegisterFileImportHandlerBean.COLUMN_SSN);
 			if (!StringUtil.isEmpty(userPersonalId) && userPersonalId.equals(personalId)) {
