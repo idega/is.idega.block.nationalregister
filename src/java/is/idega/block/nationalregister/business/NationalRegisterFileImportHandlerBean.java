@@ -231,7 +231,6 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 				this.performer = IWContext.getInstance().getCurrentUser();
 			}
 			catch (Exception n) {
-				logger.info("IWContext instance not found");
 				this.performer = null;
 			}
 			if (this.performer == null) {
