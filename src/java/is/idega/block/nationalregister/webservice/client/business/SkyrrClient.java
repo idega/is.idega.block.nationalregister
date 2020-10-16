@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.util.StringUtil;
 
 import is.idega.block.nationalregister.webservice.client.skyrr.Faersla;
 import is.idega.block.nationalregister.webservice.client.skyrr.Uttak;
@@ -78,6 +79,10 @@ public class SkyrrClient extends DefaultSpringBean {
 		SkyrrLoginClass login = getLogin();
 
 		try {
+			if (login == null || StringUtil.isEmpty(login.username) || StringUtil.isEmpty(login.password)) {
+				return null;
+			}
+
 			Uttak res = getPort().XMF0009(login.origin, login.payersPersonalID,
 					login.username, login.password, personalID);
 			if (res.isFANNST()) {
