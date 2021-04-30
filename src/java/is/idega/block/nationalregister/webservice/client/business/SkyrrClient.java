@@ -83,8 +83,13 @@ public class SkyrrClient extends DefaultSpringBean {
 				return null;
 			}
 
-			Uttak res = getPort().XMF0009(login.origin, login.payersPersonalID,
-					login.username, login.password, personalID);
+			Uttak res = getPort().XMF0009(
+					login.origin,				//	p_sUppruni
+					login.payersPersonalID,		//	p_sKtGreid
+					login.username,				//	p_sKtNot
+					login.password,				//	p_sPassword
+					personalID					//	m_sKennitala
+			);
 			if (res.isFANNST()) {
 				Object ret[] = res.getNIDURSTADA();
 				Faersla entry = (Faersla) ret[0];
