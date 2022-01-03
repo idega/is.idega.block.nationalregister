@@ -65,11 +65,11 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	private ImportFile file;
 
-	private List<String> failedRecordList = new ArrayList<String>();
+	private List<String> failedRecordList = new ArrayList<>();
 
 	private List<String> valueList;
 
-	private Collection<String> affectedFamilies = new HashSet<String>();
+	private Collection<String> affectedFamilies = new HashSet<>();
 
 	public final static int COLUMN_SYMBOL = 0;
 
@@ -135,6 +135,12 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	public final static int COLUMN_CITY = 31;
 
+	public final static int COLUMN_APPARTMENT_NUMBER = 32;
+
+	public final static int COLUMN_LEGAL_PARENT = 33;
+
+	public final static int COLUMN_RESIDENCE_PARENT = 34;
+
 	private final static String PROPERTY_NAME_RELATION_ONLY = "NAT_REG_RELATION_ONLY";
 
 	private final static String PROPERTY_NAME_POSTAL_CODE_FIX = "NAT_REG_POSTAL_CODE_FIX";
@@ -177,7 +183,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	private NumberFormat precentNF = NumberFormat.getPercentInstance();
 
-	private Map<String, Group> postalToGroupMap = new HashMap<String, Group>();
+	private Map<String, Group> postalToGroupMap = new HashMap<>();
 
 	private NationalRegisterBusiness natBiz;
 
@@ -245,7 +251,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			String sGroup = bundle.getProperty(PROPERTY_NAME_GROUP_FIX);
 			String sSkipRelations = bundle.getProperty(PROPERTY_NAME_SKIP_RELATIONS);
 //			String sSkipDead = bundle.getProperty(PROPERTY_NAME_SKIP_DECEASED);
-			this.affectedFamilies = new HashSet<String>();
+			this.affectedFamilies = new HashSet<>();
 			this.postalCodeFix = (sPostal != null && sPostal.equalsIgnoreCase("yes"));
 			this.relationsOnly = (sRelationOnly != null && sRelationOnly.equalsIgnoreCase("yes"));
 			this.citizenGroupFix = (sGroup != null && sGroup.equalsIgnoreCase("yes"));
@@ -448,9 +454,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 		FamilyLogicBean memFamLog = getServiceInstance(FamilyLogicBean.class);
 		is.idega.block.nationalregister.data.bean.NationalRegister natReg;
-		Collection<FamilyMember> coll2 = new ArrayList<FamilyMember>(coll);
+		Collection<FamilyMember> coll2 = new ArrayList<>(coll);
 		Iterator<FamilyMember> iter2 = coll.iterator();
-		Collection<User> parents = new ArrayList<User>();
+		Collection<User> parents = new ArrayList<>();
 		User user = null;
 		User user2 = null;
 		Age age;
@@ -469,8 +475,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		Relations newRelations1 = new Relations(getMemberFamilyLogic());
 		Relations oldRelations2 = new Relations(getMemberFamilyLogic());
 		Relations newRelations2 = new Relations(getMemberFamilyLogic());
-		HashMap<User, Relations> oldrelations = new HashMap<User, Relations>();
-		HashMap<User, Relations> newrelations = new HashMap<User, Relations>();
+		HashMap<User, Relations> oldrelations = new HashMap<>();
+		HashMap<User, Relations> newrelations = new HashMap<>();
 		// Loop through all family members to figure out what the relations
 		// are
 		Logger logger = getLogger();
@@ -854,10 +860,10 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	protected void doUpdateExternalContext(List<Map<Integer, String>> data) {
 	}
 
-	protected List<Map<Integer, String>> successData = new ArrayList<Map<Integer,String>>();
+	protected List<Map<Integer, String>> successData = new ArrayList<>();
 
 	protected void reset() {
-		successData = new ArrayList<Map<Integer,String>>();
+		successData = new ArrayList<>();
 	}
 
 	protected boolean processRecord(String record, Integer index) throws RemoteException, CreateException {
@@ -897,7 +903,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	}
 
 	protected Map<Integer, String> storeNationRegisterEntry() throws RemoteException, CreateException {
-		Map<Integer, String> data = new HashMap<Integer, String>();
+		Map<Integer, String> data = new HashMap<>();
 
 		// variables
 		String symbol = getProperty(COLUMN_SYMBOL, data);
@@ -932,6 +938,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 		String newSsnOrName = getProperty(COLUMN_NEW_SSN_OR_NAME, data);
 		String dateOfBirth = getProperty(COLUMN_DATE_OF_BIRTH, data);
 		String city = getProperty(COLUMN_CITY, data);
+		String appartmentNumber = getProperty(COLUMN_APPARTMENT_NUMBER, data);
+		String legalParent = getProperty(COLUMN_LEGAL_PARENT, data);
+		String residenceParent = getProperty(COLUMN_RESIDENCE_PARENT, data);
 
 		boolean success = true;
 		if (StringUtil.isEmpty(ssn)) {
@@ -944,7 +953,9 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			success = this.natBiz.updateEntry(symbol, oldId, ssn, familyId, name, commune, street, building, floor,
 					sex, maritialStatus, empty, prohibitMarking, nationality, placeOfBirth, spouseSSN, fate, parish,
 					po, address, addressCode, dateOfModification, placementCode, dateOfCreation, lastDomesticAddress,
-					agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth, group, city);
+					agentSsn, sNew, addressName, dateOfDeletion, newSsnOrName, dateOfBirth, group, city,
+					appartmentNumber, legalParent, residenceParent
+			);
 
 			if (FATE_DECEASED.equalsIgnoreCase(fate)) {
 				User user;
@@ -969,8 +980,8 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 					}
 				}
 
-				this.uBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null, city, null, null, null);
-				this.uBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null, city, null, null, null);
+				this.uBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null, city, null, null, null, null);
+				this.uBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, this.deceasedAddressString, null, null, city, null, null, null, null);
 
 				FamilyLogic familyService = getMemberFamilyLogic();
 				IWTimestamp dom = new IWTimestamp();
@@ -1024,7 +1035,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 			if (this.postalCodeFix) {
 				try {
 					if (this.postalCodeFix) {
-						this.natBiz.updateUserAddress(this.uBiz.getUser(ssn), this.uBiz, address, po, null, city, null, null);
+						this.natBiz.updateUserAddress(this.uBiz.getUser(ssn), this.uBiz, address, po, null, city, null, null, appartmentNumber);
 					}
 					return success ? data : null;
 				}
@@ -1152,7 +1163,7 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 
 	@Override
 	public List<String> getSuccessRecords() throws RemoteException {
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -1176,4 +1187,5 @@ public class NationalRegisterFileImportHandlerBean extends IBOServiceBean implem
 	public void setValueList(List<String> valueList) {
 		this.valueList = valueList;
 	}
+
 }

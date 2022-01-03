@@ -49,7 +49,8 @@ public interface NationalRegisterBusiness extends IBOService, UserGroupPlugInBus
 			String dateOfModification, String placementCode,
 			String dateOfCreation, String lastDomesticAddress, String agentSsn,
 			String sNew, String addressName, String dateOfDeletion,
-			String newSsnOrName, String dateOfBirth, Group citizenGroup, String city)
+			String newSsnOrName, String dateOfBirth, Group citizenGroup, String city,
+			String appartmentNumber, String legalParent, String residenceParent)
 			throws RemoteException;
 
 	/**
@@ -69,8 +70,8 @@ public interface NationalRegisterBusiness extends IBOService, UserGroupPlugInBus
 	 */
 	public void updateUserAddress(User user, UserBusiness userBiz,
 			String address, String po, Country country, String city,
-			Integer communeID, String addressName) throws RemoteException, CreateException,
-			RemoteException;
+			Integer communeID, String addressName, String appartmentNumber
+	) throws RemoteException, CreateException;
 
 	/**
 	 * @see is.idega.block.nationalregister.business.NationalRegisterBusinessBean#getPostalCode

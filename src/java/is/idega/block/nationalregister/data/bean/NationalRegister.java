@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
 
+import com.idega.core.location.data.AddressBMPBean;
+
 @Table
 @Entity(name = "reg_national_is")
 @Cacheable
@@ -115,8 +117,17 @@ public class NationalRegister implements Serializable {
 	@Column(name = "new_ssn", length = 18)
 	private String newSSN;
 
-	@Column(name = "date_of_birth", length = 6)
+	@Column(name = "date_of_birth", length = 8)
 	private String dateOfBirth;
+
+	@Column(name = AddressBMPBean.APPARTMENT_NUMBER, length = 50)
+	private String appartmentNumber;
+
+	@Column(name = "legal_parent", length = 12)
+	private String legalParent;
+
+	@Column(name = "residence_parent", length = 12)
+	private String residenceParent;
 
 	@Override
 	public String toString() {
@@ -377,6 +388,30 @@ public class NationalRegister implements Serializable {
 
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	public String getAppartmentNumber() {
+		return appartmentNumber;
+	}
+
+	public void setAppartmentNumber(String appartmentNumber) {
+		this.appartmentNumber = appartmentNumber;
+	}
+
+	public String getLegalParent() {
+		return legalParent;
+	}
+
+	public void setLegalParent(String legalParent) {
+		this.legalParent = legalParent;
+	}
+
+	public String getResidenceParent() {
+		return residenceParent;
+	}
+
+	public void setResidenceParent(String residenceParent) {
+		this.residenceParent = residenceParent;
 	}
 
 }

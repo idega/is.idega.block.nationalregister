@@ -126,7 +126,10 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		final String addressName,
 		final String dateOfDeletion,
 		final String newSsnOrName,
-		final String dateOfBirth
+		final String dateOfBirth,
+		final String appartmentNumber,
+		final String legalParent,
+		final String residenceParent
 	) {
 		IWMainApplicationSettings settings = getIWMainApplication().getSettings();
 		if (settings.getBoolean("nat_reg.create_nat_reg_entry", Boolean.TRUE)) {
@@ -175,6 +178,9 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 			reg.setDateOfDeletion(dateOfDeletion);
 			reg.setNewSSN(newSsnOrName);
 			reg.setDateOfBirth(dateOfBirth);
+			reg.setAppartmentNumber(appartmentNumber);
+			reg.setLegalParent(legalParent);
+			reg.setResidenceParent(residenceParent);
 
 			try {
 				getNationalRegisterDAO().update(reg);
@@ -223,7 +229,10 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 		String newSsnOrName,
 		String dateOfBirth,
 		Group citizenGroup,
-		String city
+		String city,
+		String appartmentNumber,
+		String legalParent,
+		String residenceParent
 	) {
 		try {
 			UserBusiness userBiz = getServiceInstance(UserBusiness.class);
@@ -259,7 +268,10 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 					addressName,
 					dateOfDeletion,
 					newSsnOrName,
-					dateOfBirth
+					dateOfBirth,
+					appartmentNumber,
+					legalParent,
+					residenceParent
 			);
 
 			IWTimestamp t = new IWTimestamp();
@@ -328,7 +340,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 				city = StringUtil.isEmpty(city) ? getCityFromPostalCode(po,Integer.parseInt(country.getPrimaryKey().toString())) : city;
 			}
 
-			updateUserAddress(user, userBiz, address, po, country, city, communeID, addressName);
+			updateUserAddress(user, userBiz, address, po, country, city, communeID, addressName, appartmentNumber);
 
 			if (citizenGroup != null) {
 				citizenGroup.addGroup(user);
@@ -396,13 +408,27 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	}
 
 	@Override
-	public void updateUserAddress(User user, UserBusiness userBiz, String address, String po, Country country, String city, Integer communeID, String addressName) throws RemoteException, CreateException {
+	public void updateUserAddress(
+			User user,
+			UserBusiness userBiz,
+			String address,
+			String po,
+			Country country,
+			String city,
+			Integer communeID,
+			String addressName,
+			String appartmentNumber
+	) throws RemoteException, CreateException {
 		PostalCode postalCode = getPostalCode(po);
+		if (postalCode != null && country != null) {
+			postalCode.setCountry(country);
+			postalCode.store();
+		}
 
-		Address mainAddress = userBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		Address mainAddress = userBiz.updateUsersMainAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID, appartmentNumber);
 		setAddressNominative(mainAddress, addressName);
 
-		Address coAddress = userBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID);
+		Address coAddress = userBiz.updateUsersCoAddressOrCreateIfDoesNotExist(user, address, postalCode, country, city, null, null, communeID, appartmentNumber);
 		setAddressNominative(coAddress, addressName);
 	}
 
@@ -422,7 +448,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	@Override
 	public PostalCode getPostalCode(String po) throws RemoteException {
 		if (postalCodes == null) {
-			postalCodes = new HashMap<String, PostalCode>();
+			postalCodes = new HashMap<>();
 		}
 
 		if (po != null && !po.trim().equals(CoreConstants.EMPTY)) {
@@ -616,7 +642,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	@Override
 	public Country getCountryByISOAbbreviation(String isoAbbreviation) {
 		if (countryIDs == null) {
-			countryIDs = new HashMap<String, Country>();
+			countryIDs = new HashMap<>();
 		}
 
 		if (countryIDs.containsKey(isoAbbreviation)) {
@@ -641,7 +667,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	@Override
 	public Integer getCommuneIDFromCommuneCode(String communeCode) {
 		if (communeCodes == null) {
-			communeCodes = new HashMap<String, Integer>();
+			communeCodes = new HashMap<>();
 		}
 
 		if (communeCodes.containsKey(communeCode)) {
@@ -668,7 +694,7 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 	@Override
 	public String getCityFromPostalCode(String postalCodeIdentifier, int countryID ) {
 		if (cityNames == null) {
-			cityNames = new HashMap<String, String>();
+			cityNames = new HashMap<>();
 		}
 
 		if (postalCodeIdentifier == null || postalCodeIdentifier.equals("   ")) {
@@ -725,4 +751,5 @@ public class NationalRegisterBusinessBean extends IBOServiceBean implements Nati
 
 		return null;
 	}
+
 }

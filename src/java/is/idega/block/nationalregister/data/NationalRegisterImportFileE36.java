@@ -15,7 +15,7 @@ import is.idega.block.nationalregister.business.NationalRegisterFileImportHandle
  */
 public class NationalRegisterImportFileE36		extends	GenericImportFile implements ImportFile {
 
-	public static final int NUMBER_OF_LETTERS_PER_LINE = 300;
+	public static final int NUMBER_OF_LETTERS_PER_LINE = 299;
 
 	public NationalRegisterImportFileE36() {
 		super();
@@ -43,8 +43,8 @@ public class NationalRegisterImportFileE36		extends	GenericImportFile implements
 	public ArrayList<String> getValuesFromRecordString(String recordString) {
 		if (recordString != null && recordString.length() < NUMBER_OF_LETTERS_PER_LINE)
 			throw new RuntimeException("Numbers of letters in the record string was too low. According to standard it should be " + NUMBER_OF_LETTERS_PER_LINE + ", but was " + recordString.length());
-		ArrayList<String> values = new ArrayList<String>();
-		for (int i = 0; i < 28; i++) {
+		ArrayList<String> values = new ArrayList<>();
+		for (int i = 0; i < 35; i++) {
 			String value = getValueAtIndexFromRecordString(i,recordString);
 			if (value != null) {
 				values.add(value);
@@ -69,7 +69,8 @@ FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  
 		try {
 			switch(index) {
 				case NationalRegisterFileImportHandlerBean.COLUMN_SYMBOL : return recordString.substring(0,2);
-				case NationalRegisterFileImportHandlerBean.COLUMN_OLD_ID : return recordString.substring(2,10);
+				case NationalRegisterFileImportHandlerBean.COLUMN_APPARTMENT_NUMBER :
+					return recordString.substring(2,6);
 				case NationalRegisterFileImportHandlerBean.COLUMN_SSN : return recordString.substring(10,20);
 				case NationalRegisterFileImportHandlerBean.COLUMN_FAMILY_ID : return recordString.substring(20,30);
 				case NationalRegisterFileImportHandlerBean.COLUMN_COMMUNE : return recordString.substring(61,65); // Is actually 1 field that is 12 spaces long.
@@ -94,8 +95,11 @@ FE7896760901014425690101442569ComEBhEB ComlFCCwv        94401600018510280   13  
 				case NationalRegisterFileImportHandlerBean.COLUMN_PO : return recordString.substring(204,207);
 				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS_NAME  : return recordString.substring(207,228);
 				case NationalRegisterFileImportHandlerBean.COLUMN_ADDRESS : return recordString.substring(228,249);
+				case NationalRegisterFileImportHandlerBean.COLUMN_LEGAL_PARENT :
+					return recordString.substring(249,259);
+				case NationalRegisterFileImportHandlerBean.COLUMN_RESIDENCE_PARENT :
+					return recordString.substring(259,269);
 				case NationalRegisterFileImportHandlerBean.COLUMN_STATUS : return recordString.substring(272, 276);
-				//case NationalRegisterFileImportHandlerBean.COLUMN_PARISH : return recordString.substring(101,104);
 				default : return null;
 			}
 		}
