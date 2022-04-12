@@ -16,7 +16,9 @@ import com.idega.block.importer.business.ImportFileHandler;
 import com.idega.block.importer.data.GenericImportFile;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.FileUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
@@ -144,6 +146,68 @@ public class NationalRegistryImportHelperImpl extends DefaultSpringBean implemen
 		}
 
 		return doImportFile(filePath, null, deleteFile, true, NationalRegisterImportFileDeceasedB.class);
+	}
+
+	public boolean doConvertFromCSV(String inputFile, String outputFile) {
+		try {
+			List<String> data = FileUtil.getLinesFromFile(inputFile);
+			if (ListUtil.isEmpty(data)) {
+				return false;
+			}
+
+			for (String line: data) {
+				if (StringUtil.isEmpty(line)) {
+					continue;
+				}
+
+				List<String> values = StringUtil.getValuesFromString(line, CoreConstants.SEMICOLON);
+				if (ListUtil.isEmpty(values)) {
+					continue;
+				}
+
+				System.out.println("Line values: " + values);
+
+				StringBuilder output = new StringBuilder();
+				String symbol = values.get(3);
+				if (StringUtil.isEmpty(symbol) || symbol.length() != 2) {
+					System.out.println("Invalid symbol: '" + symbol + "'");
+					continue;
+				}
+				output.append(symbol);
+
+				String oldId = null;
+				oldId = getValueWithSpaces(oldId, 8);
+				output.append(oldId);
+
+				String ssn = values.get(5);
+				if (StringUtil.isEmpty(ssn) || ssn.length() < 10) {
+					System.out.println("Invalid ssn: '" + ssn + "'");
+					continue;
+				}
+				output.append(ssn);
+
+				String familyId = values.get(6);
+				familyId = getValueWithSpaces(familyId, 10);
+				output.append(familyId);
+
+				System.out.println("Converted: " + output);
+			}
+
+			return true;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error converting data at " + inputFile, e);
+		}
+		return false;
+	}
+
+	private String getValueWithSpaces(String value, int length) {
+		if (value == null) {
+			value = CoreConstants.EMPTY;
+		}
+		while (value.length() < length) {
+			value = value.concat(CoreConstants.SPACE);
+		}
+		return value;
 	}
 
 }
