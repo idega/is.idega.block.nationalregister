@@ -1,9 +1,5 @@
 package is.idega.block.nationalregister.webservice.client.business;
 
-import is.idega.block.nationalregister.webservice.client.ferli.TjodarsynXMLLocator;
-import is.idega.block.nationalregister.webservice.client.ferli.TjodarsynXMLSoap_PortType;
-import is.idega.block.nationalregister.webservice.client.ferli.XML_Nafn_Grunn;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -11,15 +7,23 @@ import java.util.logging.Logger;
 
 import javax.xml.rpc.ServiceException;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 
-@Scope("singleton")
-@Service("ferliClient")
+import is.idega.block.nationalregister.webservice.client.ferli.TjodarsynXMLLocator;
+import is.idega.block.nationalregister.webservice.client.ferli.TjodarsynXMLSoap_PortType;
+import is.idega.block.nationalregister.webservice.client.ferli.XML_Nafn_Grunn;
+
+@Service(FerliClient.BEAN_NAME)
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class FerliClient {
+
+	public static final String BEAN_NAME = "ferliClient";
+
 	private static final String DEFAULT_ENDPOINT = "http://xml.ferli.is/tjodarsyn/service.asmx";
 	private static final String ENDPOINT_ATTRIBUTE_NAME = "ferli_natreg_endpoint";
 
@@ -54,9 +58,9 @@ public class FerliClient {
 			TjodarsynXMLSoap_PortType port = getPort();
 			if(port != null){
 				XML_Nafn_Grunn entry = port.getNafn_Grunn(personalID, login.password);
-				
+
 				if ("0".equals(entry.getRetkod())) {
-					
+
 					return createUserHolderFromNafnGrunn(entry);
 				} else {
 					System.out.println(entry.getRetLys());

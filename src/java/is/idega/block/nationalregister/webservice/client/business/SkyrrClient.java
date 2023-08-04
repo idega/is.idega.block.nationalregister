@@ -20,9 +20,11 @@ import is.idega.block.nationalregister.webservice.client.skyrr.Uttak;
 import is.idega.block.nationalregister.webservice.client.skyrr.Xml_ServiceLocator;
 import is.idega.block.nationalregister.webservice.client.skyrr.Xml_ServiceSoap_PortType;
 
-@Service("skyrrClient")
+@Service(SkyrrClient.BEAN_NAME)
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class SkyrrClient extends DefaultSpringBean {
+
+	public static final String BEAN_NAME = "skyrrClient";
 
 	private static final String DEFAULT_ENDPOINT = "https://gognxml.uh.is/xml_service.asmx";
 	private static final String ENDPOINT_ATTRIBUTE_NAME = "skyrr_natreg_endpoint";
